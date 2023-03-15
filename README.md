@@ -47,7 +47,7 @@ Then create the following directories : ./raw_data, ./raw_data/studyArea, ./proc
 python parse_wikipedia.py
 ```
 ### 7 Merge data sources
-At this stage, your working directory (here name WSH) should look like this :
+At this stage, your working directory (here named WSH) should kind of look like this :
 ```bash
  WSH
   ├── processed_data/
@@ -66,8 +66,17 @@ At this stage, your working directory (here name WSH) should look like this :
   │   └── ....
   ├── WikiSpeciesHabitats/
   │   └── species/
+  │       ├── 100124.json
+  │       └── ...
   ├── create_dataset.py
   ├── grid.py
   ├── parse_wikipedia.py
   └── requirements.txt
 ```
+Then, you can run the following command to create the dataset
+
+```bash
+python create_dataset.py --STEP all
+```
+You might want to edit the create_dataset.py file to configure which cantons you are using.
+
