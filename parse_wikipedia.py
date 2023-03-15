@@ -21,7 +21,7 @@ speciesRecords = speciesRecords[speciesRecords["speciesKey"].notna()]
 speciesRecords = speciesRecords[["species", "speciesKey"]].drop_duplicates().reset_index().drop(["index"], axis=1)
 speciesRecords["speciesKey"] = speciesRecords["speciesKey"].apply(lambda x : int(x))
 
-def match_species(species, df=speciesRecords, data_path="./GBIFxTHMSxWiki/species/"):
+def match_species(species, df=speciesRecords, data_path="./WikiSpeciesHabitats/species/"):
     """Match parsed species article to a GBIF species instance and save information in a json file"""
     title, properties, texts, text_length = species
     binomial_name = None
@@ -163,7 +163,7 @@ def find_species(data_path, limit = None):
             break
             
         # Optional limit
-        if limit is not None and len(os.listdir("./GBIFxTHMSxWiki/species/")) >= limit:
+        if limit is not None and len(os.listdir("./WikiSpeciesHabitats/species/")) >= limit:
             return None
 
     # Memory management

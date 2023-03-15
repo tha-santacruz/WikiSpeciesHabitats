@@ -131,3 +131,5 @@ dmypy.json
 # Custom
 WikiSpeciesHabitats/*.json
 WikiSpeciesHabitats/species/*.json
+processed_data/
+raw_data/

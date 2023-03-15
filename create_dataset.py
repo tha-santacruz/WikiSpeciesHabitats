@@ -177,7 +177,7 @@ class Step1():
         ## Paths
         rawDataPath = "./raw_data/"
         processedDataPath = "./processed_data/"
-        finalDataPath = "./GBIFxTHMSxWiki/"
+        finalDataPath = "./WikiSpeciesHabitats/"
         ## Area of interest
         studyArea = gpd.read_file("./raw_data/studyArea/studyArea.shp")
         ## Habitat maps processing
@@ -200,7 +200,7 @@ class Step2():
         ## Paths
         rawDataPath = "./raw_data/"
         processedDataPath = "./processed_data/"
-        finalDataPath = "./GBIFxTHMSxWiki/"
+        finalDataPath = "./WikiSpeciesHabitats/"
         ## Area of interest
         studyArea = gpd.read_file("./raw_data/studyArea/studyArea.shp")
         ## Species records processing
@@ -224,7 +224,7 @@ class Step3():
         print("Step 3 : Intersecting species and records")
         ## Paths
         processedDataPath = "./processed_data/"
-        finalDataPath = "./GBIFxTHMSxWiki/"
+        finalDataPath = "./WikiSpeciesHabitats/"
         ## Loading data
         habitatsMap = gpd.read_file(processedDataPath+"habitatsMap.gpkg")
         speciesRecords = gpd.read_file(processedDataPath+"speciesRecords.gpkg")
