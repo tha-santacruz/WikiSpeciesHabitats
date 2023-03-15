@@ -13,6 +13,10 @@ It is obtained by merging information from three initial sources :
 
 ## Dataset building
 
+### Packages
+
+First, install the required packages in your environments by running
+
 ```Bash
 pip install -r requirements.txt
 ```
