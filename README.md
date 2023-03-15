@@ -12,3 +12,7 @@ It is obtained by merging information from three initial sources :
 ---
 
 ## Dataset building
+
+```Bash
+pip install -r requirements.txt
+```
