@@ -1,17 +1,19 @@
 ## Code from https://towardsdatascience.com/wikipedia-data-science-working-with-the-worlds-largest-encyclopedia-c08efbac5f5c
 ## Adapted to retrieve species pages
-import subprocess
-import xml.sax
-import mwparserfromhell
-import re
+## Standard library
 import gc
 import json
-from multiprocessing import Pool
-from itertools import chain
-from functools import partial
-from tqdm import tqdm
 import os
+import re
+import subprocess
+import xml.sax
+from functools import partial
+from itertools import chain
+from multiprocessing import Pool
+## Third party
+import mwparserfromhell
 import pandas as pd
+from tqdm import tqdm
 
 ## Loading data
 speciesRecords = pd.read_csv("raw_data/gbif_raw.csv", sep="\t")
