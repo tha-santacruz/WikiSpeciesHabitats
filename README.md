@@ -24,15 +24,15 @@ pip install -r requirements.txt
 Then create the following directories : ./raw_data, ./raw_data/studyArea, ./processed_data, ./WikiSpeciesHabitats/, ./WikiSpeciesHabitats/species/
 ### 2 Study Area
 
-1. Define a study area, and save it in the shapefile format with the name studyArea.shp. 
-2. You can also create a .geojson version of the file as it can be used to extract data.
+1. Define a study area, and save it in the shapefile format with the name studyArea.shp
+2. You can also create a .geojson version of the file as it can be used to extract data
 3. Save your files in the ./raw_data/studyArea/ directory
 
 ### 4 Habitat maps
-1. Download the cantonal habitat maps for each canton you are interested in
-2. Each download should be named habitatmap_xx_yyyymmdd, with xx being the two letter code for the canton.
+1. Download the cantonal habitat maps for each canton you are interested in (in this case, only VD and VS have been used)
+2. Each download should be named habitatmap_xx_yyyymmdd, with xx being the two letter code for the canton
 3. Rename each downloaded folders as habitatmap_xx
-4. Place your downloaded folders in ./raw_data/.
+4. Place your downloaded folders in ./raw_data/
 
 ### 5 Species occurences
 1. Select the filters you want (country, administrative area, etc...), and download the occurence data in .csv format. You should choose the "simple" option.
@@ -41,7 +41,7 @@ Then create the following directories : ./raw_data, ./raw_data/studyArea, ./proc
 ### 6 Wikipedia articles
 1. Download a Wikipedia dump ([this post](https://towardsdatascience.com/wikipedia-data-science-working-with-the-worlds-largest-encyclopedia-c08efbac5f5c) might help you)
 2. Put all the dump files in the ./wikipedia_dump/ directory
-3. Make sure that the ./WikiSpeciesHabitats/species/ directory exits. If not, create it.
+3. Make sure that the ./WikiSpeciesHabitats/species/ directory exits. If not, create it
 4. Run the wikipedia dump parsing script 
 ```Bash
 python parse_wikipedia.py
@@ -55,13 +55,19 @@ At this stage, your working directory (here name WSH) should look like this :
   │   ├── habitatmap_vd/
   │   │   ├── HabitatMap_VD.gdb/
   │   │   └── ...
-  │   ├── habitatmap_vd/
-  │   │   ├── HabitatMap_VD.gdb/
+  │   ├── habitatmap_vs/
+  │   │   ├── HabitatMap_VS.gdb/
   │   │   └── ...
   │   ├── studyArea/
   │   │   ├── studyArea.shp
   │   │   └── ...
   │   └── gbif_raw.csv
   ├── wikipedia_dump/
-  │   ├── habitatmap_vd/
-###
+  │   └── ....
+  ├── WikiSpeciesHabitats/
+  │   └── species/
+  ├── create_dataset.py
+  ├── grid.py
+  ├── parse_wikipedia.py
+  └── requirements.txt
+```
