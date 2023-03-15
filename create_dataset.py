@@ -50,7 +50,7 @@ class HabitatMapsProcessor():
         for canton in self.cantonsList:
             print(f"Processing canton {canton}")
             ## Habitat geometries
-            habitats = gpd.read_file(self.rawDataPath+f"habitatmap_{canton.lower()}_20220316/HabitatMap_{canton}.gdb/", layer=0)
+            habitats = gpd.read_file(self.rawDataPath+f"habitatmap_{canton.lower()}/HabitatMap_{canton}.gdb/", layer=0)
             habitats["canton"] = canton
             habitats = self.clip(habitats)
             print("Clipped maps")

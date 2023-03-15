@@ -133,3 +133,5 @@ WikiSpeciesHabitats/*.json
 WikiSpeciesHabitats/species/*.json
 processed_data/
 raw_data/
+!raw_data/habitatmap_vs/.gitkeep
+!raw_data/habitatmap_vd/.gitkeep
