@@ -14,13 +14,14 @@ It is obtained by merging information from three initial sources :
 
 ## Dataset building
 
-### 1 Packages
+### 1 Packages and setup
 
 First, install the required packages in your environments by running
 
 ```Bash
 pip install -r requirements.txt
 ```
+Then create the following directories : ./raw_data, ./raw_data/studyArea, ./processed_data, ./WikiSpeciesHabitats/, ./WikiSpeciesHabitats/species/
 ### 2 Study Area
 
 1. Define a study area, and save it in the shapefile format with the name studyArea.shp. 
@@ -45,15 +46,22 @@ pip install -r requirements.txt
 ```Bash
 python parse_wikipedia.py
 ```
-
-At this stage, your raw_data/ directory should look like this :
-
-  ```bash
-  raw_data                                      # Main Folder
-      ├── habitatmap_vd                         # Controllers
-      ├── flocking_crossing_controller	
-  
-  ```
-
-
+### 7 Merge data sources
+At this stage, your working directory (here name WSH) should look like this :
+```bash
+ WSH
+  ├── processed_data/
+  ├── raw_data/
+  │   ├── habitatmap_vd/
+  │   │   ├── HabitatMap_VD.gdb/
+  │   │   └── ...
+  │   ├── habitatmap_vd/
+  │   │   ├── HabitatMap_VD.gdb/
+  │   │   └── ...
+  │   ├── studyArea/
+  │   │   ├── studyArea.shp
+  │   │   └── ...
+  │   └── gbif_raw.csv
+  ├── wikipedia_dump/
+  │   ├── habitatmap_vd/
 ###
