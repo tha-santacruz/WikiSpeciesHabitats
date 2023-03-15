@@ -41,6 +41,7 @@ pip install -r requirements.txt
 1. Download a Wikipedia dump ([this post](https://towardsdatascience.com/wikipedia-data-science-working-with-the-worlds-largest-encyclopedia-c08efbac5f5c) might help you)
 2. Put all the dump files in the ./wikipedia_dump/ directory
 3. Make sure that the ./WikiSpeciesHabitats/species/ directory exits. If not, create it.
+4. Run ```Bash python parse_wikipedia.py ```
 
 At this stage, your raw_data/ directory should look like this :
 
