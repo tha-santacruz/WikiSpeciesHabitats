@@ -232,7 +232,7 @@ class Step3():
         shm = SpeciesHabitatMerger()
         speciesHabitatsRecords = shm.merge_data(species=speciesRecords, habitats=habitatsMap)
         ## Saving species and habitats pairs
-        speciesHabitatsRecords.to_json(processedDataPath+"speciesHabitatRecords.json", orient="records")
+        speciesHabitatsRecords.to_json(processedDataPath+"speciesHabitatsRecords.json", orient="records")
         print("Saved speciesHabitatsRecords.json, head is the following")
         print(speciesHabitatsRecords.head())
         ## Saving species recorded in each zone
