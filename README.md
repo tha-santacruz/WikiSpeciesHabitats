@@ -90,5 +90,6 @@ Once all the steps have been executed, the following files should have been crea
 4. WikiSpeciesData/speciesInZones that contain a set of observed species for each zone, as well as the corresponding habitat type
 5. A bunch of other files, which are usefull to compute statistics about the dataset, which are in the processed_data/ directory. 
 
-Overall, the WikiSpeciesHabitats Dataset has the following structure :
+Overall, the WikiSpeciesHabitats Dataset has the following structure : 
+
 ![Screenshot](images/dataset.png)
