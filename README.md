@@ -79,7 +79,9 @@ Then, you can run the following command to create the dataset
 python create_dataset.py --STEP all
 ```
 You might want to edit the create_dataset.py file to configure which cantons you are using.
+
 ---
+
 ### Finished dataset
 Once all the steps have been executed, the following files should have been created :
 1. .json files named in the format specieskey.json with the wikipedia page content for the species. These files are in the WikiSpeciesData/species/ directory
