@@ -9,7 +9,7 @@ import dask_geopandas as dgpd
 import geopandas as gpd
 import pandas as pd
 from pyproj import Transformer
-from tqdm import tqdm
+from tqdm import tqdm, trange
 
 ## Custom modules
 from grid import GridBuilder
@@ -144,23 +144,25 @@ class SpeciesRecordsProcessor():
 
 class SpeciesHabitatMerger():
     """This class is intended to merge processed species and natural habitats data"""
-    def __init__(self):
-        pass
+    def __init__(self, studyArea):
+        self.grid = GridBuilder().grid_from_shape(shape=studyArea)
 
-    def merge_data(self, species, habitats):
+    def merge_data(self, speciesPath, habitatsPath):
         ## Performing inner spatial join
         #speciesHabitatsRecords = dgpd.from_geopandas(species, npartitions=8).sjoin(dgpd.from_geopandas(habitats, npartitions=8), how="inner").compute()
         ## Performing inner spatial join (with for loop to alleviate memory usage)
         speciesHabitatsRecords = pd.DataFrame()
-        for i in tqdm(species["gridID"].unique()):
-            subsetSpecies = species[species["gridID"]==i]
-            subsetHabitats = habitats[habitats["gridID"]==i]
+        for i in trange(len(self.grid)):
+            gridCell = self.grid.loc[i].geometry
+            #print(gridCell)
+            subsetSpecies = gpd.read_file(speciesPath, mask=gridCell)
+            subsetHabitats = gpd.read_file(habitatsPath, mask=gridCell)
             subsetSpecies = subsetSpecies.sjoin(subsetHabitats, how="inner")
             ## Multiprocessing is useless with small batches like this
             #subsetSpecies = dgpd.from_geopandas(subsetSpecies, npartitions=8).sjoin(dgpd.from_geopandas(subsetHabitats, npartitions=8), how="inner").compute()
             speciesHabitatsRecords = pd.concat([speciesHabitatsRecords, subsetSpecies])
-            species = species.drop(species[species["gridID"]==i].index)
-            habitats = habitats.drop(habitats[habitats["gridID"]==i].index)
+            #species = species.drop(species[species["gridID"]==i].index)
+            #habitats = habitats.drop(habitats[habitats["gridID"]==i].index)
         print("Intersected data")
         ## Keeping meaningful columns only
         speciesHabitatsRecords = speciesHabitatsRecords[["index_right", "gridID_right", "TypoCH_NUM", "speciesKey", "Shape_Area", "canton"]]
@@ -226,11 +228,13 @@ class Step3():
         processedDataPath = "./processed_data/"
         finalDataPath = "./WikiSpeciesHabitats/"
         ## Loading data
-        habitatsMap = gpd.read_file(processedDataPath+"habitatsMap.gpkg")
-        speciesRecords = gpd.read_file(processedDataPath+"speciesRecords.gpkg")
+        ## Area of interest
+        studyArea = gpd.read_file("./raw_data/studyArea/studyArea.shp")
+        #habitatsMap = gpd.read_file(processedDataPath+"habitatsMap.gpkg")
+        #speciesRecords = gpd.read_file(processedDataPath+"speciesRecords.gpkg")
         ## Species-habitats pairs
-        shm = SpeciesHabitatMerger()
-        speciesHabitatsRecords = shm.merge_data(species=speciesRecords, habitats=habitatsMap)
+        shm = SpeciesHabitatMerger(studyArea=studyArea)
+        speciesHabitatsRecords = shm.merge_data(speciesPath=processedDataPath+"speciesRecords.gpkg", habitatsPath=processedDataPath+"habitatsMap.gpkg")
         ## Saving species and habitats pairs
         speciesHabitatsRecords.to_json(processedDataPath+"speciesHabitatsRecords.json", orient="records")
         print("Saved speciesHabitatsRecords.json, head is the following")
