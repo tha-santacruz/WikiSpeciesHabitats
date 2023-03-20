@@ -60,7 +60,7 @@ class HabitatMapsProcessor():
             print("Grouped maps by grid cell")
             habitatsMap = pd.concat([habitatsMap, habitats])
             ## Habitat descriptions
-            uniqueHabitats = gpd.read_file(self.rawDataPath+f"habitatmap_{canton.lower()}_20220316/HabitatMap_{canton}.gdb/", layer=1)
+            uniqueHabitats = gpd.read_file(self.rawDataPath+f"habitatmap_{canton.lower()}/HabitatMap_{canton}.gdb/", layer=1)
             habitatsData = pd.DataFrame(pd.concat([habitatsData, uniqueHabitats]).drop_duplicates())
             print("Got unique habitats")
         habitatsMap = habitatsMap.reset_index()
