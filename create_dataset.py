@@ -234,7 +234,8 @@ class Step3():
             speciesRecords = gpd.read_file(processedDataPath+"speciesRecords.gpkg", mask=gridCell)
             print("Loaded records")
             ## Species-habitats pairs
-            speciesHabitatsRecords = shm.merge_data(species=speciesRecords, habitats=habitatsMap)
+            newRecords = shm.merge_data(species=speciesRecords, habitats=habitatsMap)
+            speciesHabitatsRecords = pd.concat([speciesHabitatsRecords, newRecords])
         print("Intersected data")
         ## Keeping meaningful columns only
         speciesHabitatsRecords = speciesHabitatsRecords[["index_right", "gridID_right", "TypoCH_NUM", "speciesKey", "Shape_Area", "canton"]]
