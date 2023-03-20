@@ -145,7 +145,7 @@ class SpeciesRecordsProcessor():
 class SpeciesHabitatMerger():
     """This class is intended to merge processed species and natural habitats data"""
     def __init__(self, studyArea):
-        self.grid = GridBuilder().grid_from_shape(shape=studyArea)
+        self.grid = GridBuilder().grid_from_shape(shape=studyArea, width=25000, height=25000)
 
     def merge_data(self, speciesPath, habitatsPath):
         ## Performing inner spatial join
@@ -157,9 +157,9 @@ class SpeciesHabitatMerger():
             #print(gridCell)
             subsetSpecies = gpd.read_file(speciesPath, mask=gridCell)
             subsetHabitats = gpd.read_file(habitatsPath, mask=gridCell)
-            subsetSpecies = subsetSpecies.sjoin(subsetHabitats, how="inner")
-            ## Multiprocessing is useless with small batches like this
-            #subsetSpecies = dgpd.from_geopandas(subsetSpecies, npartitions=8).sjoin(dgpd.from_geopandas(subsetHabitats, npartitions=8), how="inner").compute()
+            #subsetSpecies = subsetSpecies.sjoin(subsetHabitats, how="inner")
+            ## Multiprocessing is useless with small batches
+            subsetSpecies = dgpd.from_geopandas(subsetSpecies, npartitions=8).sjoin(dgpd.from_geopandas(subsetHabitats, npartitions=8), how="inner").compute()
             speciesHabitatsRecords = pd.concat([speciesHabitatsRecords, subsetSpecies])
             #species = species.drop(species[species["gridID"]==i].index)
             #habitats = habitats.drop(habitats[habitats["gridID"]==i].index)
