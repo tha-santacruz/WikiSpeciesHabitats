@@ -163,9 +163,9 @@ class SpeciesHabitatMerger():
             habitats = habitats.drop(habitats[habitats["gridID"]==i].index)
         print("Intersected data")
         ## Keeping meaningful columns only
-        speciesHabitatsRecords = speciesHabitatsRecords[["index_right", "TypoCH_NUM", "speciesKey", "Shape_Area", "canton"]]
+        speciesHabitatsRecords = speciesHabitatsRecords[["index_right", "gridID_right", "TypoCH_NUM", "speciesKey", "Shape_Area", "canton"]]
         ## Renaming columns
-        speciesHabitatsRecords = speciesHabitatsRecords.rename(columns={"index_right": "zoneID","Shape_Area": "shapeArea"})
+        speciesHabitatsRecords = speciesHabitatsRecords.rename(columns={"index_right": "zoneID", "gridID_right":"gridID", "Shape_Area": "shapeArea"})
         print("Trimmed fields")
         return speciesHabitatsRecords
     
