@@ -134,3 +134,4 @@ WikiSpeciesHabitats/species/*.json
 processed_data/
 raw_data/
 wikipedia_dump/
+checkpoints/
