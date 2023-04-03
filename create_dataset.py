@@ -232,8 +232,6 @@ class Step3():
             gridCell = grid.loc[i].geometry
             ## Loading data
             habitatsMap = gpd.read_file(processedDataPath+"habitatsMap.gpkg", mask=gridCell)
-            print(habitatsMap.head())
-            print("Loaded maps")
             speciesRecords = gpd.read_file(processedDataPath+"speciesRecords.gpkg", mask=gridCell)
             print("Loaded records")
             ## Species-habitats pairs
