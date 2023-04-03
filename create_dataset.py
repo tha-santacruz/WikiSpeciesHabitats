@@ -31,6 +31,7 @@ class HabitatMapsProcessor():
         """ Group all polygons of same type among each cell"""
         ## Intersecting with grid cells
         intersected = dgpd.from_geopandas(shape, npartitions=8).sjoin(dgpd.from_geopandas(self.grid, npartitions=8), how="inner").compute()
+        shape = None
         intersected = intersected[["TypoCH_NUM", "index_right", "canton", "Shape_Area", "geometry"]]
         intersected = intersected.rename(columns={"index_right": "gridID"})
         ## Merge shapes of same type within cells (with for loop to alleviate memory usage)
@@ -39,6 +40,7 @@ class HabitatMapsProcessor():
             subset = intersected[intersected["gridID"]==i]
             subset = dgpd.from_geopandas(subset, npartitions=8).dissolve(by=["TypoCH_NUM", "gridID", "canton"], aggfunc={"Shape_Area": "sum"}).compute()
             merged = pd.concat([merged, subset])
+            intersected = intersected.drop(intersected[intersected["gridID"]==i].index)
         #merged = dgpd.from_geopandas(intersected, npartitions=8).dissolve(by=["TypoCH_NUM", "gridID", "canton"], aggfunc={"Shape_Area": "sum"})
         #merged = merged.compute()
         return merged
@@ -63,7 +65,7 @@ class HabitatMapsProcessor():
             uniqueHabitats = gpd.read_file(self.rawDataPath+f"habitatmap_{canton.lower()}/HabitatMap_{canton}.gdb/", layer=1)
             habitatsData = pd.DataFrame(pd.concat([habitatsData, uniqueHabitats]).drop_duplicates())
             print("Got unique habitats")
-        habitatsMap = habitatsMap.reset_index()
+        habitatsMap = habitatsMap.reset_index().reset_index().rename(columns={"index":"zoneID"})
         habitatsData = habitatsData.drop("geometry", axis=1)
         return habitatsMap, habitatsData
 
@@ -230,6 +232,7 @@ class Step3():
             gridCell = grid.loc[i].geometry
             ## Loading data
             habitatsMap = gpd.read_file(processedDataPath+"habitatsMap.gpkg", mask=gridCell)
+            print(habitatsMap.head())
             print("Loaded maps")
             speciesRecords = gpd.read_file(processedDataPath+"speciesRecords.gpkg", mask=gridCell)
             print("Loaded records")
@@ -238,9 +241,9 @@ class Step3():
             speciesHabitatsRecords = pd.concat([speciesHabitatsRecords, newRecords])
         print("Intersected data")
         ## Keeping meaningful columns only
-        speciesHabitatsRecords = speciesHabitatsRecords[["index_right", "gridID_right", "TypoCH_NUM", "speciesKey", "Shape_Area", "canton"]]
+        speciesHabitatsRecords = speciesHabitatsRecords[["zoneID", "gridID_right", "TypoCH_NUM", "speciesKey", "Shape_Area", "canton"]]
         ## Renaming columns
-        speciesHabitatsRecords = speciesHabitatsRecords.rename(columns={"index_right": "zoneID", "gridID_right":"gridID", "Shape_Area": "shapeArea"})
+        speciesHabitatsRecords = speciesHabitatsRecords.rename(columns={"gridID_right":"gridID", "Shape_Area": "shapeArea"})
         print("Trimmed fields")
         ## Saving species and habitats pairs
         speciesHabitatsRecords.to_json(processedDataPath+"speciesHabitatsRecords.json", orient="records")
