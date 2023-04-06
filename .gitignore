@@ -138,3 +138,6 @@ raw_data/
 wikipedia_dump/
 checkpoints/
 models/
+
+## New
+wikipedia_species/

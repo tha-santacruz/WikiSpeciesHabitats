@@ -15,15 +15,7 @@ import mwparserfromhell
 import pandas as pd
 from tqdm import tqdm
 
-## Loading data
-speciesRecords = pd.read_csv("raw_data/gbif_raw.csv", sep="\t")
-
-## Simplifying columns
-speciesRecords = speciesRecords[speciesRecords["speciesKey"].notna()]
-speciesRecords = speciesRecords[["species", "speciesKey"]].drop_duplicates().reset_index().drop(["index"], axis=1)
-speciesRecords["speciesKey"] = speciesRecords["speciesKey"].apply(lambda x : int(x))
-
-def match_species(species, df=speciesRecords, data_path="./WikiSpeciesHabitats/species/"):
+def match_species(species, data_path="./wikipedia_species/"):
     """Match parsed species article to a GBIF species instance and save information in a json file"""
     title, properties, texts, text_length = species
     binomial_name = None
@@ -32,47 +24,34 @@ def match_species(species, df=speciesRecords, data_path="./WikiSpeciesHabitats/s
     ## Try to create the species binomial name using genus and species, or taxon properties of the parsed infobox
     try:
         binomial_name = properties["genus"]+" "+properties["species"].split()[0]
-        #print("case genus and species")
     except:
         try:
             binomial_name = properties["taxon"]
-            #print("case taxon")
         except:
             pass
     if binomial_name:
-        #print(f"binomial name {binomial_name}")
+        ## Create json file content
+        content = {"binomial_name":binomial_name, "page_text":texts, "text_length":text_length, "page_title":title}
+        file_name = binomial_name.replace(" ","_")
+        ## See if a json file for this species Key already exists
+        if f"{file_name}.json" in os.listdir(data_path):
+            #print("existing file")
+            with open(data_path + f"{file_name}.json", "r") as fp:
+                existing_file = json.load(fp)
 
-        ## Match binomial name to GBIF instance
-        if binomial_name in df["species"].to_list():
-            #print(f"matched, number of matches : {len(df[df['species']==binomial_name]['speciesKey'].to_list())}")
-            ## Multiple species key can share the same binomial name (but have different scientific names)
-
-            for speciesKey in df[df["species"]==binomial_name]["speciesKey"].to_list():
-                #print(f"speciesKey : {speciesKey}")
-                ## Create json file content
-                content = {"binomialName":binomial_name, "speciesKey":speciesKey, "pageText":texts, "textLength":text_length, "pageTitle":title}
-
-                ## See if a json file for this species Key already exists
-                if f"{speciesKey}.json" in os.listdir(data_path):
-                    #print("existing file")
-                    with open(data_path + f"{speciesKey}.json", "r") as fp:
-                        existing_file = json.load(fp)
-
-                    ## Check if new text is longer and replace older text if so
-                    if len(texts) > len(existing_file["pageText"]):
-                        #print("replaced file")
-                        with open(data_path + f"{speciesKey}.json", "w") as fp:
-                            json.dump(content, fp)
-                            
-                ## Save new file if no previous instance is known
-                else:
-                    #print("new file")
-                    with open(data_path + f"{speciesKey}.json", "w") as fp:
-                        json.dump(content, fp)
-    
+            ## Check if new text is longer and replace older text if so
+            if len(texts) > len(existing_file["page_text"]):
+                #print("replaced file")
+                with open(data_path + f"{file_name}.json", "w") as fp:
+                    json.dump(content, fp)
+                    
+        ## Save new file if no previous instance is known
+        else:
+            #print("new file")
+            with open(data_path + f"{file_name}.json", "w") as fp:
+                json.dump(content, fp)
+    ## Discard if binomial name could not be recovered
     else:
-        #print("could not buid binomial name for {title}")
-        #print(properties)
         pass
 
 def process_article(title, text, timestamp, template = 'Speciesbox'):
@@ -176,20 +155,19 @@ def find_species(data_path, limit = None):
 
 
 if __name__=="__main__":
-    print(f"loaded data lenght : {len(speciesRecords)}")
     # Making partitions for the multiprocessing
     root = "./wikipedia_dump/"
     partitions = [root + file for file in os.listdir(root) if 'xml-p' in file]
 
     ## Multiprocessing
     # Create a pool of workers to execute processes
-    """pool = Pool(processes = 8)
+    pool = Pool(processes = 8)
     # Map (service, tasks), applies function to each partition
     results = pool.map(find_species, partitions)
     pool.close()
-    pool.join()"""
+    pool.join()
 
-    ## Single process (for debugging)
+    """## Single process (for debugging)
     for part in tqdm(partitions):
-        find_species(data_path=partitions[0])
+        find_species(data_path=partitions[0])"""
 
