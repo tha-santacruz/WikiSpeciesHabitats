@@ -21,7 +21,7 @@ First, install the required packages in your environments by running
 ```Bash
 pip install -r requirements.txt
 ```
-Then create the following directories : ./raw_data, ./raw_data/studyArea, ./processed_data, ./WikiSpeciesHabitats/, ./WikiSpeciesHabitats/species/
+Then create the following directories : ./raw_data, ./raw_data/studyArea, ./processed_data, ./WikiSpeciesHabitats/, ./wikipedia_species/
 ### 2 Study Area
 
 1. Define a study area, and save it in the shapefile format with the name studyArea.shp
