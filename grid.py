@@ -12,7 +12,23 @@ class GridBuilder():
     def __init__(self):
         pass
 
-    def grid_from_shape(self, shape, width=1000, height=1000):
+    def split_cells(self, shape, num_stripes=3):
+        shape["split"] = "train"
+        ids = shape.index.to_list()
+        splitted = np.array_split(ids, num_stripes)
+        for i in range(num_stripes):
+            splitted[i] = np.array_split(splitted[i],10)
+            for j in range(10):
+                if j > 3:
+                    shape.loc[splitted[i][j],"split"] = "train"
+                elif j > 0:
+                    shape.loc[splitted[i][j],"split"] = "test"
+                else:
+                    shape.loc[splitted[i][j],"split"] = "val"
+        return shape
+
+
+    def grid_from_shape(self, shape, width=1000, height=1000, split=True):
         """Create a grid from reference shape and crs"""
         ## Get reference shape bounds and crs
         xmin, ymin, xmax, ymax =  shape.total_bounds
@@ -43,9 +59,13 @@ class GridBuilder():
         ## Save polygons as a GeoDataFrame, assign CRS and return
         grid = gpd.GeoDataFrame({'geometry':polygons})
         grid = grid.set_crs(crs=crs)
+
+        ## Assign split if requested
+        if split:
+            grid = self.split_cells(grid)
         return grid
     
-    def grid_from_points(self, xmin, ymin, xmax, ymax, crs, width=1000, height=1000):
+    def grid_from_points(self, xmin, ymin, xmax, ymax, crs, width=1000, height=1000, split=True):
         """Create a grid from point coordinates and provided crs"""
         ## Compute number of rows and colums needed
         rows = int(np.ceil((ymax-ymin) /  height))
@@ -72,4 +92,14 @@ class GridBuilder():
         ## Save polygons as a GeoDataFrame, assign CRS and return
         grid = gpd.GeoDataFrame({'geometry':polygons})
         grid = grid.set_crs(crs=crs)
+
+        ## Assign split if requested
+        if split:
+            grid = self.split_cells(grid)
         return grid
+    
+if __name__ == "__main__":
+    shape = gpd.read_file("raw_data/studyArea/studyArea.shp")
+    bg = GridBuilder()
+    grid = bg.grid_from_shape(shape=shape)
+    grid.to_file("grid.shp")
