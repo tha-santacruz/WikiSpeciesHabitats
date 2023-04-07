@@ -17,15 +17,15 @@ from grid import GridBuilder
 
 class HabitatMapsProcessor():
     """This class contains the processing steps of the cantonal Habitat maps"""
-    def __init__(self, studyArea, cantonsList, rawDataPath):
-        self.studyArea = studyArea
-        self.cantonsList = cantonsList
-        self.rawDataPath = rawDataPath
-        self.grid = GridBuilder().grid_from_shape(shape=self.studyArea)
+    def __init__(self, study_area, cantons_list, raw_data_path):
+        self.study_area = study_area
+        self.cantons_list = cantons_list
+        self.raw_data_path = raw_data_path
+        self.grid = GridBuilder().grid_from_shape(shape=self.study_area, split=False)
     
     def clip(self, shape):
         """Clip fast using dask-geopandas"""
-        return dgpd.clip(gdf=dgpd.from_geopandas(shape, npartitions=8), mask=self.studyArea).compute()
+        return dgpd.clip(gdf=dgpd.from_geopandas(shape, npartitions=8), mask=self.study_area).compute()
     
     def groupby_gridcell(self, shape):
         """ Group all polygons of same type among each cell"""
@@ -33,26 +33,26 @@ class HabitatMapsProcessor():
         intersected = dgpd.from_geopandas(shape, npartitions=8).sjoin(dgpd.from_geopandas(self.grid, npartitions=8), how="inner").compute()
         shape = None
         intersected = intersected[["TypoCH_NUM", "index_right", "canton", "Shape_Area", "geometry"]]
-        intersected = intersected.rename(columns={"index_right": "gridID"})
+        intersected = intersected.rename(columns={"index_right": "grid_id"})
         ## Merge shapes of same type within cells (with for loop to alleviate memory usage)
         merged = pd.DataFrame()
-        for i in tqdm(intersected["gridID"].unique()):
-            subset = intersected[intersected["gridID"]==i]
-            subset = dgpd.from_geopandas(subset, npartitions=8).dissolve(by=["TypoCH_NUM", "gridID", "canton"], aggfunc={"Shape_Area": "sum"}).compute()
+        for i in tqdm(intersected["grid_id"].unique()):
+            subset = intersected[intersected["grid_id"]==i]
+            subset = dgpd.from_geopandas(subset, npartitions=8).dissolve(by=["TypoCH_NUM", "grid_id", "canton"], aggfunc={"Shape_Area": "sum"}).compute()
             merged = pd.concat([merged, subset])
-            intersected = intersected.drop(intersected[intersected["gridID"]==i].index)
-        #merged = dgpd.from_geopandas(intersected, npartitions=8).dissolve(by=["TypoCH_NUM", "gridID", "canton"], aggfunc={"Shape_Area": "sum"})
+            intersected = intersected.drop(intersected[intersected["grid_id"]==i].index)
+        #merged = dgpd.from_geopandas(intersected, npartitions=8).dissolve(by=["TypoCH_NUM", "grid_id", "canton"], aggfunc={"Shape_Area": "sum"})
         #merged = merged.compute()
         return merged
 
     def process_cantons(self):
         """Processing of cantonal maps"""
-        habitatsMap = pd.DataFrame()
-        habitatsData = pd.DataFrame()
-        for canton in self.cantonsList:
+        habitats_map = pd.DataFrame()
+        habitats_data = pd.DataFrame()
+        for canton in self.cantons_list:
             print(f"Processing canton {canton}")
             ## Habitat geometries
-            habitats = gpd.read_file(self.rawDataPath+f"habitatmap_{canton.lower()}/HabitatMap_{canton}.gdb/", layer=0)
+            habitats = gpd.read_file(self.raw_data_path+f"habitatmap_{canton.lower()}/HabitatMap_{canton}.gdb/", layer=0)
             habitats["canton"] = canton
             habitats = self.clip(habitats)
             print("Clipped maps")
@@ -60,34 +60,37 @@ class HabitatMapsProcessor():
             habitats = self.groupby_gridcell(habitats)
             #habitats = habitats[["TypoCH_NUM", "canton", "Shape_Area", "geometry"]]
             print("Grouped maps by grid cell")
-            habitatsMap = pd.concat([habitatsMap, habitats])
+            habitats_map = pd.concat([habitats_map, habitats])
             ## Habitat descriptions
-            uniqueHabitats = gpd.read_file(self.rawDataPath+f"habitatmap_{canton.lower()}/HabitatMap_{canton}.gdb/", layer=1)
-            habitatsData = pd.DataFrame(pd.concat([habitatsData, uniqueHabitats]).drop_duplicates())
+            unique_habitats = gpd.read_file(self.raw_data_path+f"habitatmap_{canton.lower()}/HabitatMap_{canton}.gdb/", layer=1)
+            habitats_data = pd.DataFrame(pd.concat([habitats_data, unique_habitats]).drop_duplicates())
             print("Got unique habitats")
-        habitatsMap = habitatsMap.reset_index().reset_index().rename(columns={"index":"zoneID"})
-        habitatsData = habitatsData.drop("geometry", axis=1)
-        return habitatsMap, habitatsData
+        habitats_map = habitats_map.reset_index().reset_index().rename(columns={"index":"zone_id"})
+        habitats_data = habitats_data.drop("geometry", axis=1)
+        return habitats_map, habitats_data
 
 
 class SpeciesRecordsProcessor():
     """This class contains the processing steps of the georeferenced species observations"""
-    def __init__(self, studyArea, rawDataPath, finalDataPath):
-        self.studyArea = studyArea
-        self.rawDataPath = rawDataPath
-        self.finalDataPath = finalDataPath
-        self.grid = GridBuilder().grid_from_shape(shape=self.studyArea)
+    def __init__(self, study_area, raw_data_path, final_data_path):
+        self.study_area = study_area
+        self.raw_data_path = raw_data_path
+        self.final_data_path = final_data_path
+        self.grid = GridBuilder().grid_from_shape(shape=self.study_area, split=True)
     
     def filter(self, records):
         """Filter species records"""
+        ## Renaming fields
+        records = records.rename(columns={"speciesKey":"species_key","gbifID":"gbif_id","scientificName":"scientific_name",
+                                          "decimalLatitude":"lat","decimalLongitude":"long","eventDate":"event_date"})
         # Filtering on date
         records = records[records["year"]>=1950]
         # Filtering on taxonomy level
-        records = records.dropna(subset=["species","speciesKey"])
-        records["speciesKey"] = records["speciesKey"].apply(lambda x : int(x))
+        records = records.dropna(subset=["species","species_records"])
+        records["species_records"] = records["species_records"].apply(lambda x : int(x))
         # Keeping meaningful fields
-        fields=["gbifID", "scientificName", "kingdom", "phylum", "class", "order", "family", 
-                "genus", "species", "decimalLatitude", "decimalLongitude", "eventDate", "speciesKey"]
+        fields=["gbif_id", "scientific_name", "kingdom", "phylum", "class", "order", "family", 
+                "genus", "species", "lat", "lon", "event_date", "species_records"]
         records = records[fields]
         return records
 
@@ -96,7 +99,7 @@ class SpeciesRecordsProcessor():
         ## Set transformation
         trans = Transformer.from_crs(old, new, always_xy=True)
         ## Reproject
-        xx, yy = trans.transform(records["decimalLongitude"].values, records["decimalLatitude"].values)
+        xx, yy = trans.transform(records["long"].values, records["lat"].values)
         records["E"] = xx
         records["N"] = yy
         ## Wrap in GeoDataFrame
@@ -106,42 +109,42 @@ class SpeciesRecordsProcessor():
     
     def clip(self, shape):
         """Clip fast using dask-geopandas"""
-        return dgpd.clip(gdf=dgpd.from_geopandas(shape, npartitions=8), mask=self.studyArea).compute()
+        return dgpd.clip(gdf=dgpd.from_geopandas(shape, npartitions=8), mask=self.study_area).compute()
     
     def trim_species(self, records):
         """Keep only species that have wikipedia info"""
         ## List all documented species
-        speciesList = [int(elem[:-5]) for elem in os.listdir(self.finalDataPath+"species/")]
+        species_list = [int(elem[:-5]) for elem in os.listdir(self.final_data_path+"species/")]
         ## Keep entries where species key are known
-        records = records[records["speciesKey"].isin(speciesList)]
+        records = records[records["species_records"].isin(species_list)]
         return records
     
     def add_grid(self, shape):
         ## Intersecting with grid cells
         intersected = dgpd.from_geopandas(shape, npartitions=8).sjoin(dgpd.from_geopandas(self.grid, npartitions=8), how="inner").compute()
-        intersected = intersected.rename(columns={"index_right": "gridID"})
+        intersected = intersected.rename(columns={"index_right": "grid_id"})
         return intersected
     
     def process_records(self):
         """Processing of species records"""
         ## Loading data
-        speciesRecords = pd.read_csv(self.rawDataPath+f"gbif_raw.csv", sep="\t")
+        species_records = pd.read_csv(self.raw_data_path+f"gbif_raw.csv", sep="\t")
         ## Filtering
-        speciesRecords = self.filter(speciesRecords)
+        species_records = self.filter(species_records)
         print("Filtered records")
         ## Reproject
-        speciesRecords = self.reproject(speciesRecords)
+        species_records = self.reproject(species_records)
         print("Reprojected records")
         ## Trim observed species
-        speciesRecords = self.trim_species(speciesRecords)
+        species_records = self.trim_species(species_records)
         print("Filtered records wrt species")
         ## Clip using study area
-        speciesRecords = self.clip(speciesRecords)
+        species_records = self.clip(species_records)
         print("Clipped records")
         ## Add grid cell id to records
-        speciesRecords = self.add_grid(speciesRecords)
+        species_records = self.add_grid(species_records)
         print("Added grid ID to records")
-        return speciesRecords
+        return species_records
 
 
 class SpeciesHabitatMerger():
@@ -151,19 +154,19 @@ class SpeciesHabitatMerger():
 
     def merge_data(self, species, habitats):
         ## Performing inner spatial join
-        #speciesHabitatsRecords = dgpd.from_geopandas(species, npartitions=8).sjoin(dgpd.from_geopandas(habitats, npartitions=8), how="inner").compute()
+        #species_habitats_records = dgpd.from_geopandas(species, npartitions=8).sjoin(dgpd.from_geopandas(habitats, npartitions=8), how="inner").compute()
         ## Performing inner spatial join (with for loop to alleviate memory usage)
-        speciesHabitatsRecords = pd.DataFrame()
-        for i in tqdm(species["gridID"].unique()):
-            subsetSpecies = species[species["gridID"]==i]
-            subsetHabitats = habitats[habitats["gridID"]==i]
-            subsetSpecies = subsetSpecies.sjoin(subsetHabitats, how="inner")
+        species_habitats_records = pd.DataFrame()
+        for i in tqdm(species["grid_id"].unique()):
+            subset_species = species[species["grid_id"]==i]
+            subset_habitats = habitats[habitats["grid_id"]==i]
+            subset_species = subset_species.sjoin(subset_habitats, how="inner")
             ## Multiprocessing is useless with small batches like this
-            #subsetSpecies = dgpd.from_geopandas(subsetSpecies, npartitions=8).sjoin(dgpd.from_geopandas(subsetHabitats, npartitions=8), how="inner").compute()
-            speciesHabitatsRecords = pd.concat([speciesHabitatsRecords, subsetSpecies])
-            species = species.drop(species[species["gridID"]==i].index)
-            habitats = habitats.drop(habitats[habitats["gridID"]==i].index)
-        return speciesHabitatsRecords
+            #subset_species = dgpd.from_geopandas(subset_species, npartitions=8).sjoin(dgpd.from_geopandas(subset_habitats, npartitions=8), how="inner").compute()
+            species_habitats_records = pd.concat([species_habitats_records, subset_species])
+            species = species.drop(species[species["grid_id"]==i].index)
+            habitats = habitats.drop(habitats[habitats["grid_id"]==i].index)
+        return species_habitats_records
     
 
 class Step1():
@@ -171,22 +174,22 @@ class Step1():
     def __init__(self):
         print("Step 1 : Habitat maps processing")
         ## Paths
-        rawDataPath = "./raw_data/"
-        processedDataPath = "./processed_data/"
-        finalDataPath = "./WikiSpeciesHabitats/"
+        raw_data_path = "./raw_data/"
+        processed_data_path = "./processed_data/"
+        final_data_path = "./final_data/"
         ## Area of interest
-        studyArea = gpd.read_file("./raw_data/studyArea/studyArea.shp")
+        study_area = gpd.read_file("./raw_data/study_area/study_area.shp")
         ## Habitat maps processing
-        hmp = HabitatMapsProcessor(studyArea=studyArea, cantonsList=["VS","VD"], rawDataPath=rawDataPath)
-        habitatsMap, habitatsData = hmp.process_cantons()
+        hmp = HabitatMapsProcessor(study_area=study_area, cantons_list=["VS","VD"], raw_data_path=raw_data_path)
+        habitats_map, habitats_data = hmp.process_cantons()
         hmp = None
         ## Saving data
-        habitatsMap.to_file(processedDataPath+"habitatsMap.gpkg", driver="GPKG")
-        print("Saved habitatsMap.gpkg, head is the following")
-        print(habitatsMap.head())
-        habitatsData.to_json(finalDataPath+"habitatsData.json", orient="records")
-        print("Saved habitatsData.json, head is the following")
-        print(habitatsData.head())
+        habitats_map.to_file(processed_data_path+"habitats_map.gpkg", driver="GPKG")
+        print("Saved habitats_map.gpkg, head is the following")
+        print(habitats_map.head())
+        habitats_data.to_json(final_data_path+"habitats_data.json", orient="records")
+        print("Saved habitats_data.json, head is the following")
+        print(habitats_data.head())
 
 
 class Step2():
@@ -194,24 +197,24 @@ class Step2():
     def __init__(self):
         print("Step 2 : Species records processing")
         ## Paths
-        rawDataPath = "./raw_data/"
-        processedDataPath = "./processed_data/"
-        finalDataPath = "./WikiSpeciesHabitats/"
+        raw_data_path = "./raw_data/"
+        processed_data_path = "./processed_data/"
+        final_data_path = "./final_data/"
         ## Area of interest
-        studyArea = gpd.read_file("./raw_data/studyArea/studyArea.shp")
+        study_area = gpd.read_file("./raw_data/study_area/study_area.shp")
         ## Species records processing
-        srp = SpeciesRecordsProcessor(studyArea=studyArea, rawDataPath=rawDataPath, finalDataPath=finalDataPath)
-        speciesRecords = srp.process_records()
+        srp = SpeciesRecordsProcessor(study_area=study_area, raw_data_path=raw_data_path, final_data_path=final_data_path)
+        species_records = srp.process_records()
         srp = None
         ## Saving data and unique species records
-        speciesRecords.to_file(processedDataPath+"speciesRecords.gpkg", driver="GPKG")
-        print("Saved speciesRecords.gpkg, head is the following")
-        print(speciesRecords.head())
-        fields = ["scientificName","kingdom","phylum","class","order","family","genus","species","speciesKey"]
-        speciesData = speciesRecords[fields].drop_duplicates()
-        speciesData.to_json(finalDataPath+"speciesData.json")
-        print("Saved speciesData.json, head is the following")
-        print(speciesData.head())
+        species_records.to_file(processed_data_path+"species_records.gpkg", driver="GPKG")
+        print("Saved species_records.gpkg, head is the following")
+        print(species_records.head())
+        fields = ["scientific_name","kingdom","phylum","class","order","family","genus","species","species_key"]
+        species_data = species_records[fields].drop_duplicates()
+        species_data.to_json(final_data_path+"species_data.json")
+        print("Saved species_data.json, head is the following")
+        print(species_data.head())
 
 
 class Step3():
@@ -219,49 +222,48 @@ class Step3():
     def __init__(self):
         print("Step 3 : Intersecting species and records")
         ## Paths
-        processedDataPath = "./processed_data/"
-        finalDataPath = "./WikiSpeciesHabitats/"
+        processed_data_path = "./processed_data/"
+        final_data_path = "./final_data/"
         ## Species-habitats merger
         shm = SpeciesHabitatMerger()
         ## Grid
-        studyArea = gpd.read_file("./raw_data/studyArea/studyArea.shp")
-        grid = GridBuilder().grid_from_shape(shape=studyArea, width=25000, height=25000)
+        study_area = gpd.read_file("./raw_data/study_area/study_area.shp")
+        grid = GridBuilder().grid_from_shape(shape=study_area, width=25000, height=25000)
         ## Process by big chunks to alleviate memory usage
-        speciesHabitatsRecords = pd.DataFrame()
+        species_habitats_records = pd.DataFrame()
         for i in trange(len(grid)):
             gridCell = grid.loc[i].geometry
             ## Loading data
-            habitatsMap = gpd.read_file(processedDataPath+"habitatsMap.gpkg", mask=gridCell)
-            speciesRecords = gpd.read_file(processedDataPath+"speciesRecords.gpkg", mask=gridCell)
+            habitats_map = gpd.read_file(processed_data_path+"habitats_map.gpkg", mask=gridCell)
+            species_records = gpd.read_file(processed_data_path+"species_records.gpkg", mask=gridCell)
             print("Loaded records")
             ## Species-habitats pairs
-            newRecords = shm.merge_data(species=speciesRecords, habitats=habitatsMap)
-            speciesHabitatsRecords = pd.concat([speciesHabitatsRecords, newRecords])
+            newRecords = shm.merge_data(species=species_records, habitats=habitats_map)
+            species_habitats_records = pd.concat([species_habitats_records, newRecords])
         print("Intersected data")
         ## Keeping meaningful columns only
-        speciesHabitatsRecords = speciesHabitatsRecords[["zoneID", "gridID_right", "TypoCH_NUM", "speciesKey", "Shape_Area", "canton"]]
+        species_habitats_records = species_habitats_records[["zone_id", "grid_id_right", "TypoCH_NUM", "species_key", "Shape_Area", "canton"]]
         ## Renaming columns
-        speciesHabitatsRecords = speciesHabitatsRecords.rename(columns={"gridID_right":"gridID", "Shape_Area": "shapeArea"})
+        species_habitats_records = species_habitats_records.rename(columns={"grid_id_right":"grid_id", "Shape_Area": "shape_area"})
         print("Trimmed fields")
         ## Saving species and habitats pairs
-        speciesHabitatsRecords.to_json(processedDataPath+"speciesHabitatsRecords.json", orient="records")
-        print("Saved speciesHabitatsRecords.json, head is the following")
-        print(speciesHabitatsRecords.head())
+        species_habitats_records.to_json(processed_data_path+"species_habitats_records.json", orient="records")
+        print("Saved species_habitats_records.json, head is the following")
+        print(species_habitats_records.head())
+        """
         ## Saving species recorded in each zone
-        speciesHabitatsRecords.groupby(["zoneID","TypoCH_NUM"])["speciesKey"].agg(["unique"]).reset_index().to_json(finalDataPath+"speciesInZones.json", orient="records")
+        species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_records"].agg(["unique"]).reset_index().to_json(final_data_path+"speciesInZones.json", orient="records")
         print("Saved speciesInZones.json, head is the following")
-        print(speciesHabitatsRecords.groupby(["zoneID","TypoCH_NUM"])["speciesKey"].agg(["unique"]).reset_index().head())
+        print(species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_records"].agg(["unique"]).reset_index().head())
         ## Saving species recorded in each habitat type
-        speciesHabitatsRecords.groupby(["TypoCH_NUM"])["speciesKey"].agg(["unique"]).reset_index().to_json(processedDataPath+"speciesInHabitats.json", orient="records")
+        species_habitats_records.groupby(["TypoCH_NUM"])["species_records"].agg(["unique"]).reset_index().to_json(processed_data_path+"speciesInHabitats.json", orient="records")
         print("Saved speciesInHabitats.json, head is the following")
-        print(speciesHabitatsRecords.groupby(["TypoCH_NUM"])["speciesKey"].agg(["unique"]).reset_index())
+        print(species_habitats_records.groupby(["TypoCH_NUM"])["species_records"].agg(["unique"]).reset_index())
         ## Saving habitats recorded for each species
-        speciesHabitatsRecords.groupby(["speciesKey"])["TypoCH_NUM"].agg(["unique"]).reset_index().to_json(processedDataPath+"habitatsOfSpecies.json", orient="records")
+        species_habitats_records.groupby(["species_records"])["TypoCH_NUM"].agg(["unique"]).reset_index().to_json(processed_data_path+"habitatsOfSpecies.json", orient="records")
         print("Saved habitatsOfSpecies.json, head is the following")
-        print(speciesHabitatsRecords.groupby(["speciesKey"])["TypoCH_NUM"].agg(["unique"]).reset_index())
-
-
-
+        print(species_habitats_records.groupby(["species_records"])["TypoCH_NUM"].agg(["unique"]).reset_index())
+        """
 
 if __name__=="__main__":
     """

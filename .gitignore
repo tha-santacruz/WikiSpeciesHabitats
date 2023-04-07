@@ -133,6 +133,10 @@ WikiSpeciesHabitats/*.json
 WikiSpeciesHabitats/species/*.json
 WikiSpeciesHabitats/species_backup/
 WikiSpeciesHabitats/species_dummy/
+final_data/*.json
+final_data/species/*.json
+final_data/species_backup/
+final_data/species_dummy/
 processed_data/
 raw_data/
 wikipedia_dump/

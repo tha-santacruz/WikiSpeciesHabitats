@@ -16,14 +16,15 @@ import pandas as pd
 from tqdm import tqdm
 
 ## Loading data
-speciesRecords = pd.read_csv("raw_data/gbif_raw.csv", sep="\t")
+species_records = pd.read_csv("raw_data/gbif_raw.csv", sep="\t")
 
 ## Simplifying columns
-speciesRecords = speciesRecords[speciesRecords["speciesKey"].notna()]
-speciesRecords = speciesRecords[["species", "speciesKey"]].drop_duplicates().reset_index().drop(["index"], axis=1)
-speciesRecords["speciesKey"] = speciesRecords["speciesKey"].apply(lambda x : int(x))
+species_records = species_records.rename(columns={"speciesKey":"species_key"})
+species_records = species_records[species_records["species_key"].notna()]
+species_records = species_records[["species", "species_key"]].drop_duplicates().reset_index().drop(["index"], axis=1)
+species_records["species_key"] = species_records["species_key"].apply(lambda x : int(x))
 
-def match_species(species, df=speciesRecords, data_path="./WikiSpeciesHabitats/species/"):
+def match_species(species, df=species_records, data_path="./final_data/species/"):
     """Match parsed species article to a GBIF species instance and save information in a json file"""
     title, properties, texts, text_length = species
     binomial_name = None
@@ -44,30 +45,30 @@ def match_species(species, df=speciesRecords, data_path="./WikiSpeciesHabitats/s
 
         ## Match binomial name to GBIF instance
         if binomial_name in df["species"].to_list():
-            #print(f"matched, number of matches : {len(df[df['species']==binomial_name]['speciesKey'].to_list())}")
+            #print(f"matched, number of matches : {len(df[df['species']==binomial_name]['species_key'].to_list())}")
             ## Multiple species key can share the same binomial name (but have different scientific names)
 
-            for speciesKey in df[df["species"]==binomial_name]["speciesKey"].to_list():
-                #print(f"speciesKey : {speciesKey}")
+            for species_key in df[df["species"]==binomial_name]["species_key"].to_list():
+                #print(f"species_key : {species_key}")
                 ## Create json file content
-                content = {"binomialName":binomial_name, "speciesKey":speciesKey, "pageText":texts, "textLength":text_length, "pageTitle":title}
+                content = {"binomial_name":binomial_name, "species_key":species_key, "page_text":texts, "text_length":text_length, "page_title":title}
 
                 ## See if a json file for this species Key already exists
-                if f"{speciesKey}.json" in os.listdir(data_path):
+                if f"{species_key}.json" in os.listdir(data_path):
                     #print("existing file")
-                    with open(data_path + f"{speciesKey}.json", "r") as fp:
+                    with open(data_path + f"{species_key}.json", "r") as fp:
                         existing_file = json.load(fp)
 
                     ## Check if new text is longer and replace older text if so
-                    if len(texts) > len(existing_file["pageText"]):
+                    if len(texts) > len(existing_file["page_text"]):
                         #print("replaced file")
-                        with open(data_path + f"{speciesKey}.json", "w") as fp:
+                        with open(data_path + f"{species_key}.json", "w") as fp:
                             json.dump(content, fp)
                             
                 ## Save new file if no previous instance is known
                 else:
                     #print("new file")
-                    with open(data_path + f"{speciesKey}.json", "w") as fp:
+                    with open(data_path + f"{species_key}.json", "w") as fp:
                         json.dump(content, fp)
     
     else:
@@ -165,7 +166,7 @@ def find_species(data_path, limit = None):
             break
             
         # Optional limit
-        if limit is not None and len(os.listdir("./WikiSpeciesHabitats/species/")) >= limit:
+        if limit is not None and len(os.listdir("./final_data/species/")) >= limit:
             return None
 
     # Memory management
@@ -176,20 +177,20 @@ def find_species(data_path, limit = None):
 
 
 if __name__=="__main__":
-    print(f"loaded data lenght : {len(speciesRecords)}")
+    print(f"loaded data lenght : {len(species_records)}")
     # Making partitions for the multiprocessing
     root = "./wikipedia_dump/"
     partitions = [root + file for file in os.listdir(root) if 'xml-p' in file]
 
     ## Multiprocessing
     # Create a pool of workers to execute processes
-    """pool = Pool(processes = 8)
+    pool = Pool(processes = 8)
     # Map (service, tasks), applies function to each partition
     results = pool.map(find_species, partitions)
     pool.close()
-    pool.join()"""
+    pool.join()
 
-    ## Single process (for debugging)
+    """## Single process (for debugging)
     for part in tqdm(partitions):
-        find_species(data_path=partitions[0])
+        find_species(data_path=partitions[0])"""
 
