@@ -81,16 +81,17 @@ class SpeciesRecordsProcessor():
     def filter(self, records):
         """Filter species records"""
         ## Renaming fields
+        print(records.columns)
         records = records.rename(columns={"speciesKey":"species_key","gbifID":"gbif_id","scientificName":"scientific_name",
-                                          "decimalLatitude":"lat","decimalLongitude":"long","eventDate":"event_date"})
+                                          "decimalLatitude":"lat","decimalLongitude":"lon","eventDate":"event_date"})
         # Filtering on date
         records = records[records["year"]>=1950]
         # Filtering on taxonomy level
-        records = records.dropna(subset=["species","species_records"])
-        records["species_records"] = records["species_records"].apply(lambda x : int(x))
+        records = records.dropna(subset=["species","species_key"])
+        records["species_key"] = records["species_key"].apply(lambda x : int(x))
         # Keeping meaningful fields
         fields=["gbif_id", "scientific_name", "kingdom", "phylum", "class", "order", "family", 
-                "genus", "species", "lat", "lon", "event_date", "species_records"]
+                "genus", "species", "lat", "lon", "event_date", "species_key"]
         records = records[fields]
         return records
 
@@ -99,7 +100,7 @@ class SpeciesRecordsProcessor():
         ## Set transformation
         trans = Transformer.from_crs(old, new, always_xy=True)
         ## Reproject
-        xx, yy = trans.transform(records["long"].values, records["lat"].values)
+        xx, yy = trans.transform(records["lon"].values, records["lat"].values)
         records["E"] = xx
         records["N"] = yy
         ## Wrap in GeoDataFrame
@@ -116,7 +117,7 @@ class SpeciesRecordsProcessor():
         ## List all documented species
         species_list = [int(elem[:-5]) for elem in os.listdir(self.final_data_path+"species/")]
         ## Keep entries where species key are known
-        records = records[records["species_records"].isin(species_list)]
+        records = records[records["species_key"].isin(species_list)]
         return records
     
     def add_grid(self, shape):
@@ -242,7 +243,7 @@ class Step3():
             species_habitats_records = pd.concat([species_habitats_records, newRecords])
         print("Intersected data")
         ## Keeping meaningful columns only
-        species_habitats_records = species_habitats_records[["zone_id", "grid_id_right", "TypoCH_NUM", "species_key", "Shape_Area", "canton"]]
+        species_habitats_records = species_habitats_records[["zone_id", "grid_id_right", "TypoCH_NUM", "species_key", "Shape_Area", "canton", "split"]]
         ## Renaming columns
         species_habitats_records = species_habitats_records.rename(columns={"grid_id_right":"grid_id", "Shape_Area": "shape_area"})
         print("Trimmed fields")
@@ -252,17 +253,17 @@ class Step3():
         print(species_habitats_records.head())
         """
         ## Saving species recorded in each zone
-        species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_records"].agg(["unique"]).reset_index().to_json(final_data_path+"speciesInZones.json", orient="records")
+        species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_key"].agg(["unique"]).reset_index().to_json(final_data_path+"speciesInZones.json", orient="records")
         print("Saved speciesInZones.json, head is the following")
-        print(species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_records"].agg(["unique"]).reset_index().head())
+        print(species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_key"].agg(["unique"]).reset_index().head())
         ## Saving species recorded in each habitat type
-        species_habitats_records.groupby(["TypoCH_NUM"])["species_records"].agg(["unique"]).reset_index().to_json(processed_data_path+"speciesInHabitats.json", orient="records")
+        species_habitats_records.groupby(["TypoCH_NUM"])["species_key"].agg(["unique"]).reset_index().to_json(processed_data_path+"speciesInHabitats.json", orient="records")
         print("Saved speciesInHabitats.json, head is the following")
-        print(species_habitats_records.groupby(["TypoCH_NUM"])["species_records"].agg(["unique"]).reset_index())
+        print(species_habitats_records.groupby(["TypoCH_NUM"])["species_key"].agg(["unique"]).reset_index())
         ## Saving habitats recorded for each species
-        species_habitats_records.groupby(["species_records"])["TypoCH_NUM"].agg(["unique"]).reset_index().to_json(processed_data_path+"habitatsOfSpecies.json", orient="records")
+        species_habitats_records.groupby(["species_key"])["TypoCH_NUM"].agg(["unique"]).reset_index().to_json(processed_data_path+"habitatsOfSpecies.json", orient="records")
         print("Saved habitatsOfSpecies.json, head is the following")
-        print(species_habitats_records.groupby(["species_records"])["TypoCH_NUM"].agg(["unique"]).reset_index())
+        print(species_habitats_records.groupby(["species_key"])["TypoCH_NUM"].agg(["unique"]).reset_index())
         """
 
 if __name__=="__main__":
