@@ -12,7 +12,7 @@ class GridBuilder():
     def __init__(self):
         pass
 
-    def split_cells(self, shape, num_stripes=3):
+    def split_cells(self, shape, num_stripes=5):
         shape["split"] = "train"
         ids = shape.index.to_list()
         splitted = np.array_split(ids, num_stripes)
@@ -28,7 +28,7 @@ class GridBuilder():
         return shape
 
 
-    def grid_from_shape(self, shape, width=1000, height=1000, split=True):
+    def grid_from_shape(self, shape, width=1000, height=1000, split=True, num_stripes=5):
         """Create a grid from reference shape and crs"""
         ## Get reference shape bounds and crs
         xmin, ymin, xmax, ymax =  shape.total_bounds
@@ -62,7 +62,7 @@ class GridBuilder():
 
         ## Assign split if requested
         if split:
-            grid = self.split_cells(grid)
+            grid = self.split_cells(grid, num_stripes=num_stripes)
         return grid
     
     def grid_from_points(self, xmin, ymin, xmax, ymax, crs, width=1000, height=1000, split=True):

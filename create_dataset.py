@@ -161,6 +161,7 @@ class SpeciesHabitatMerger():
         for i in tqdm(species["grid_id"].unique()):
             subset_species = species[species["grid_id"]==i]
             subset_habitats = habitats[habitats["grid_id"]==i]
+            subset_habitats["Shape_Area"] = subset_habitats.area
             subset_species = subset_species.sjoin(subset_habitats, how="inner")
             ## Multiprocessing is useless with small batches like this
             #subset_species = dgpd.from_geopandas(subset_species, npartitions=8).sjoin(dgpd.from_geopandas(subset_habitats, npartitions=8), how="inner").compute()
