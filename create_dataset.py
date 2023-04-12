@@ -26,7 +26,6 @@ class Step1():
         ## Paths
         raw_data_path = "./raw_data/"
         processed_data_path = "./processed_data/"
-        final_data_path = "./final_data/"
         ## Area of interest
         study_area = gpd.read_file("./raw_data/study_area/study_area.shp")
         ## Habitat maps processing
@@ -37,7 +36,7 @@ class Step1():
         habitats_map.to_file(processed_data_path+"habitats_map.gpkg", driver="GPKG")
         print("Saved habitats_map.gpkg, head is the following")
         print(habitats_map.head())
-        habitats_data.to_json(final_data_path+"habitats_data.json", orient="records")
+        habitats_data.to_json(processed_data_path+"habitats_data.json", orient="records")
         print("Saved habitats_data.json, head is the following")
         print(habitats_data.head())
 
@@ -62,7 +61,7 @@ class Step2():
         print(species_records.head())
         fields = ["scientific_name","kingdom","phylum","class","order","family","genus","species","species_key"]
         species_data = species_records[fields].drop_duplicates()
-        species_data.to_json(final_data_path+"species_data.json")
+        species_data.to_json(processed_data_path+"species_data.json")
         print("Saved species_data.json, head is the following")
         print(species_data.head())
 
@@ -73,36 +72,19 @@ class Step3():
         print("Step 3 : Intersecting species and records")
         ## Paths
         processed_data_path = "./processed_data/"
-        final_data_path = "./final_data/"
-        ## Species-habitats merger
-        shm = SpeciesHabitatMerger()
-        ## Grid
+        ## Study Area
         study_area = gpd.read_file("./raw_data/study_area/study_area.shp")
-        grid = GridBuilder().grid_from_shape(shape=study_area, width=25000, height=25000)
-        ## Process by big chunks to alleviate memory usage
-        species_habitats_records = pd.DataFrame()
-        for i in trange(len(grid)):
-            gridCell = grid.loc[i].geometry
-            ## Loading data
-            habitats_map = gpd.read_file(processed_data_path+"habitats_map.gpkg", mask=gridCell)
-            species_records = gpd.read_file(processed_data_path+"species_records.gpkg", mask=gridCell)
-            print("Loaded records")
-            ## Species-habitats pairs
-            newRecords = shm.merge_data(species=species_records, habitats=habitats_map)
-            species_habitats_records = pd.concat([species_habitats_records, newRecords])
-        print("Intersected data")
-        ## Keeping meaningful columns only
-        species_habitats_records = species_habitats_records[["zone_id", "grid_id_right", "TypoCH_NUM", "species_key", "Shape_Area", "canton", "split"]]
-        ## Renaming columns
-        species_habitats_records = species_habitats_records.rename(columns={"grid_id_right":"grid_id", "Shape_Area": "shape_area"})
-        print("Trimmed fields")
+        ## Species-habitats merger
+        shm = SpeciesHabitatMerger(study_area=study_area, processed_data_path=processed_data_path)
+        ## Intersect data by chunks (to alleviate memory)
+        species_habitats_records = shm.process_chunks()
         ## Saving species and habitats pairs
         species_habitats_records.to_json(processed_data_path+"species_habitats_records.json", orient="records")
         print("Saved species_habitats_records.json, head is the following")
         print(species_habitats_records.head())
         """
         ## Saving species recorded in each zone
-        species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_key"].agg(["unique"]).reset_index().to_json(final_data_path+"speciesInZones.json", orient="records")
+        species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_key"].agg(["unique"]).reset_index().to_json(processed_data_path+"speciesInZones.json", orient="records")
         print("Saved speciesInZones.json, head is the following")
         print(species_habitats_records.groupby(["zone_id","TypoCH_NUM"])["species_key"].agg(["unique"]).reset_index().head())
         ## Saving species recorded in each habitat type
@@ -124,7 +106,7 @@ class Step4():
         processed_data_path = "./processed_data/"
         final_data_path = "./final_data/"
         ## Examples builder
-        itb = InputsTargetsBuilder()
+        itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level="class")
 
 
 if __name__=="__main__":
