@@ -106,7 +106,16 @@ class Step4():
         processed_data_path = "./processed_data/"
         final_data_path = "./final_data/"
         ## Examples builder
-        itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level="class")
+        itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level="group")
+        ## Process inputs and target files
+        inputs_targets, species_ids, habitats_ids = itb.process_data()
+        ## Save processed files
+        inputs_targets.to_json(final_data_path + "all_data.json", orient="records")
+        species_ids.to_json(final_data_path + "species_keys.json", orient="records")
+        habitats_ids.to_json(final_data_path + "habitats_keys.json", orient="records")
+        for split in ["train", "test", "val"]:
+            inputs_targets[inputs_targets["split"]==split].to_json(final_data_path + f"{split}_data.json", orient="records")
+
 
 
 if __name__=="__main__":
@@ -117,8 +126,8 @@ if __name__=="__main__":
     ## Parser for the execution of the steps
     parser = argparse.ArgumentParser(description="Dataset building parser")
     parser.add_argument("--STEP", dest="STEP",
-                        choices=["1","2","3","all"],
-                        help="{STEP 1 : habitat maps processing, SETP 2 : species maps processing, STEP 3 : habitat and species STEP all : all steps}",
+                        choices=["1","2","3","4","all"],
+                        help="{STEP 1 : habitat maps processing, SETP 2 : species maps processing, STEP 3 : habitat and species, STEP 4 : input and target pairs, STEP all : all steps}",
                         type=str)
     args = parser.parse_args()
 
@@ -131,9 +140,12 @@ if __name__=="__main__":
         Step2()
     elif args.STEP == "3":
         Step3()
+    elif args.STEP == "4":
+        Step4()
     elif args.STEP == "all":
         Step1()
         Step2()
         Step3()
+        Step4()
 
     print("Dataset is finished")
