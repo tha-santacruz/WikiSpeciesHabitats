@@ -19,8 +19,8 @@ class InputsTargetsBuilder():
         species_habitats_records = pd.read_json(self.processed_data_path + "species_habitats_records.json", orient="records")
         habitats_data = pd.read_json(self.processed_data_path + "habitats_data.json", orient="records").set_index("TypoCH_NUM")
         ## Merge sources
-        species_habitats_records = species_habitats_records.join(habitats_data[["Class","Group_","Type"]], on="TypoCH_NUM", how="left")
-        species_habitats_records = species_habitats_records.rename(columns={"Class": "class", "Group_":"group", "Type": "type"})
+        species_habitats_records = species_habitats_records.join(habitats_data[["Class","Group_","Type","Hybrid"]], on="TypoCH_NUM", how="left")
+        species_habitats_records = species_habitats_records.rename(columns={"Class": "class", "Group_":"group", "Type": "type", "Hybrid":"hybrid"})
         ## Get unique values of classes
         unique_classes = species_habitats_records[self.level].unique()
         ## Sort "alphabetically"
