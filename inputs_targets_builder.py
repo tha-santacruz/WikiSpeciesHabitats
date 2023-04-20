@@ -69,8 +69,13 @@ class InputsTargetsBuilder():
         x = [unique_classes.index(c) for c in entry]
         return F.one_hot(torch.tensor(x), num_classes=len(unique_classes)).sum(dim=0).tolist()
 
-    def get_species_classes(self, records, unique_classes):
+    def get_species_classes(self, records, unique_classes, filter_uncommon=False):
         """Get one_hot encoded classes for each species"""
+        if filter_uncommon:
+            species_classes_counts = pd.DataFrame(records[["species_key",self.level]].value_counts()).reset_index().rename(columns={0:"count"})
+            species_classes_counts = species_classes_counts.join(pd.DataFrame(records["species_key"].value_counts()).rename(columns={"species_key":"total"})["total"], on="species_key", how="inner")
+            species_classes_counts["fraction"] = species_classes_counts["count"]/species_classes_counts["total"]
+            records = species_classes_counts[species_classes_counts["fraction"]>0.01]
         species_classes = records.groupby("species_key")[self.level].unique().reset_index().rename(columns={self.level:"classes"})
         species_classes["classes_onehot"] = species_classes["classes"].apply(lambda x : self.get_onehots(x, unique_classes))
         return species_classes
