@@ -106,7 +106,7 @@ class Step4():
         processed_data_path = "./processed_data/"
         final_data_path = "./final_data/"
         ## Examples builder
-        itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level="class", filter=True)
+        itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level="group", filter=True)
         ## Process inputs and target files
         inputs_targets, species_ids, habitats_ids = itb.process_data()
         ## Save processed files

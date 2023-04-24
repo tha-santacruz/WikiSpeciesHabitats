@@ -3,6 +3,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm, trange
 import random
+from itertools import compress
 tqdm.pandas()
 
 
@@ -68,7 +69,8 @@ class InputsTargetsBuilder():
     def get_onehots(self, entry, unique_classes):
         """Retrieve one_hot encodings"""
         x = [unique_classes.index(c) for c in entry]
-        return F.one_hot(torch.tensor(x), num_classes=len(unique_classes)).sum(dim=0).tolist()
+        one_hots = F.one_hot(torch.tensor(x), num_classes=len(unique_classes)).sum(dim=0).tolist()
+        return one_hots
 
     def get_species_classes(self, records, unique_classes):
         """Get one_hot encoded classes for each species"""
@@ -113,6 +115,9 @@ class InputsTargetsBuilder():
         ## Get species and habitats keys and names (for the ones actually present in the dataset)
         species_ids, habitats_ids = self.get_species_habitats_ids(inputs, unique_classes, habitats_data)
         return inputs, species_ids, habitats_ids
+    
+    def remove_unwanted_classes(self, record, mask):
+        return list(compress(record,mask))
 
     def process_data(self):
         """Process records"""
@@ -124,5 +129,15 @@ class InputsTargetsBuilder():
         print("Made inputs with max 10 species")
         ## Make targets
         inputs_targets, species_ids, habitats_ids = self.make_targets(records, inputs, unique_classes, habitats_data)
+        ## Filter rare classes
+        if self.level=="group":
+            print("Removing unwanted classes")
+            to_avoid = [2,23,24,31,65,9]
+            mask = [val not in to_avoid for val in unique_classes]
+            inputs_targets["species_based_class"] = inputs_targets["species_based_class"].progress_apply(lambda x : self.remove_unwanted_classes(x, mask))
+            inputs_targets["num_classes"] = inputs_targets["species_based_class"].progress_apply(lambda x : sum(x))
+            habitats_ids = habitats_ids.loc[~habitats_ids["class"].isin(to_avoid)]
+            print(inputs_targets.head())
+            print(habitats_ids.head())
         return inputs_targets, species_ids, habitats_ids
 
