@@ -8,10 +8,11 @@ tqdm.pandas()
 
 class InputsTargetsBuilder():
     """This class contains the processing steps to make inputs and targets using matched species and records"""
-    def __init__(self, processed_data_path, final_data_path, level="class"):
+    def __init__(self, processed_data_path, final_data_path, level="class", filter=True):
         self.processed_data_path = processed_data_path
         self.final_data_path = final_data_path
         self.level = level # "class", "group" or "type"
+        self.filter = filter
 
     def load_and_merge(self):
         """Load and merge species occurences and habitat information"""
@@ -69,9 +70,9 @@ class InputsTargetsBuilder():
         x = [unique_classes.index(c) for c in entry]
         return F.one_hot(torch.tensor(x), num_classes=len(unique_classes)).sum(dim=0).tolist()
 
-    def get_species_classes(self, records, unique_classes, filter_uncommon=False):
+    def get_species_classes(self, records, unique_classes):
         """Get one_hot encoded classes for each species"""
-        if filter_uncommon:
+        if self.filter:
             species_classes_counts = pd.DataFrame(records[["species_key",self.level]].value_counts()).reset_index().rename(columns={0:"count"})
             species_classes_counts = species_classes_counts.join(pd.DataFrame(records["species_key"].value_counts()).rename(columns={"species_key":"total"})["total"], on="species_key", how="inner")
             species_classes_counts["fraction"] = species_classes_counts["count"]/species_classes_counts["total"]
