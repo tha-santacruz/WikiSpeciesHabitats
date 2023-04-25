@@ -105,16 +105,21 @@ class Step4():
         ## Paths
         processed_data_path = "./processed_data/"
         final_data_path = "./final_data/"
-        ## Examples builder
-        itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level="group", filter=True)
-        ## Process inputs and target files
-        inputs_targets, species_ids, habitats_ids = itb.process_data()
-        ## Save processed files
-        inputs_targets.to_json(final_data_path + "all_data.json", orient="records")
-        species_ids.to_json(final_data_path + "species_keys.json", orient="records")
-        habitats_ids.to_json(final_data_path + "habitats_keys.json", orient="records")
-        for split in ["train", "test", "val"]:
-            inputs_targets[inputs_targets["split"]==split].to_json(final_data_path + f"{split}_data.json", orient="records")
+        for level in "class", "group":
+            if level == "class":
+                lname = "L1"
+            else:
+                lname = "L2"
+            ## Examples builder
+            itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level=level, filter=True)
+            ## Process inputs and target files
+            inputs_targets, species_ids, habitats_ids = itb.process_data()
+            ## Save processed files
+            inputs_targets.to_json(final_data_path + f"{lname}_all_data.json", orient="records")
+            species_ids.to_json(final_data_path + f"{lname}_species_keys.json", orient="records")
+            habitats_ids.to_json(final_data_path + f"{lname}_habitats_keys.json", orient="records")
+            for split in ["train", "test", "val"]:
+                inputs_targets[inputs_targets["split"]==split].to_json(final_data_path + f"{lname}_{split}_data.json", orient="records")
 
 
 
