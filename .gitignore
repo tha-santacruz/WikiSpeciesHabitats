@@ -143,6 +143,8 @@ raw_data/
 wikipedia_dump/
 checkpoints/
 models/
+bert_finetuning/negatives/
+bert_finetuning/positives/
 
 ## New
 wikipedia_species/
