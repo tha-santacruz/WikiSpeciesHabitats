@@ -145,6 +145,7 @@ checkpoints/
 models/
 bert_finetuning/negatives/
 bert_finetuning/positives/
+bert_finetuning/all_examples/
 
 ## New
 wikipedia_species/

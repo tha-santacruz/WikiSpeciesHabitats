@@ -56,7 +56,7 @@ class ParagraphsRetriever():
 
 
 if __name__ == "__main__":
-    #df = pd.DataFrame(columns=["species_file","binomial_name","paragraph_index","paragraph_class","paragraphe_file"])
+    #df = pd.DataFrame(columns=["species_file","binomial_name","paragraph_index","paragraph_class","paragraph_file"])
     #df.to_json("annotated_data.json", orient="records")
     species_path = "/data/nicola/WSH/final_data/species/"
     species_list = os.listdir(species_path)
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     ## Species to be used for annotation
     unused_species = [spe for spe in species_list if spe not in used_species]
     annotated_data = pd.read_json("./annotated_data.json", orient="records")
-    #annotated_data = pd.DataFrame(columns=["species_file","binomial_name","paragraph_index","paragraph_class","paragraphe_file"])
+    #annotated_data = pd.DataFrame(columns=["species_file","binomial_name","paragraph_index","paragraph_class","paragraph_file"])
     ## Remove previously annotated files
     unused_species = [spe for spe in unused_species if spe not in annotated_data["species_file"].unique().tolist()]
     ## Shuffle species
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         ## Gather paragraphs
         paragraphs, name = pr.get_paragraphs(file)
         ## Set temporary df for the file contents
-        file_df = pd.DataFrame(columns=["species_file","binomial_name","paragraph_index","paragraph_class","paragraphe_file"])
+        file_df = pd.DataFrame(columns=["species_file","binomial_name","paragraph_index","paragraph_class","paragraph_file"])
         print(f"=========\nFile {file} Species {name}, {len(paragraphs)} paragraphs\n=========\n")
         ## Iterate over pars
         for par in paragraphs:
