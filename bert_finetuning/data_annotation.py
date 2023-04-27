@@ -72,7 +72,7 @@ if __name__ == "__main__":
     ## Shuffle species
     random.shuffle(unused_species)
 
-    #unused_species = ["2359706.json"]
+    #unused_species = ["2434552.json"]
 
     pr = ParagraphsRetriever(root=species_path)
     ## Iterate over files
