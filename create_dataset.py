@@ -17,6 +17,7 @@ from habitat_maps_processor import HabitatMapsProcessor
 from inputs_targets_builder import InputsTargetsBuilder
 from species_habitat_merger import SpeciesHabitatMerger
 from species_records_processor import SpeciesRecordsProcessor
+from species_splits_maker import SpeciesSplitsMaker
 
 
 class Step1():
@@ -119,7 +120,13 @@ class Step4():
             species_ids.to_json(final_data_path + f"{lname}_species_keys.json", orient="records")
             habitats_ids.to_json(final_data_path + f"{lname}_habitats_keys.json", orient="records")
             for split in ["train", "test", "val"]:
-                inputs_targets[inputs_targets["split"]==split].to_json(final_data_path + f"{lname}_{split}_data.json", orient="records")
+                inputs_targets[inputs_targets["split"]==split].to_json(final_data_path + f"{lname}_spatial_based_{split}_data.json", orient="records")
+            ## Split data again using species
+            ssm = SpeciesSplitsMaker(inputs_targets=inputs_targets, species_keys=species_ids)
+            train, val, test = ssm.process()
+            train.to_json(final_data_path + f"{lname}_species_based_train_data.json", orient="records")
+            val.to_json(final_data_path + f"{lname}_species_based_val_data.json", orient="records")
+            test.to_json(final_data_path + f"{lname}_species_based_test_data.json", orient="records")
 
 
 
