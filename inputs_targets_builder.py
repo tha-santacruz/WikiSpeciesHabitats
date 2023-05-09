@@ -5,6 +5,8 @@ from tqdm import tqdm, trange
 import random
 from itertools import compress
 tqdm.pandas()
+import json
+import tempfile
 
 
 class InputsTargetsBuilder():
@@ -51,6 +53,7 @@ class InputsTargetsBuilder():
             entry = records_unbalanced.loc[i]
             ## If lenght is ok, then just keep the sample
             if len(entry["species_key"])<=allowedSize:
+                #entry["species_key"] = list(entry["species_key"])
                 records = pd.concat([records, pd.DataFrame(entry).T])
             ## Otherwise, shuffle species keys and make chunks of wanted size
             else:
@@ -104,17 +107,33 @@ class InputsTargetsBuilder():
         print(habitats_ids.head())
         return species_ids, habitats_ids
 
-    def make_targets(self, records, inputs, unique_classes, habitats_data):
+    def make_species_based_targets(self, records, inputs, unique_classes, habitats_data):
         """Make targets using intersection of habitats where species occur for each zone"""
         ## Get classes for species
         species_classes = self.get_species_classes(records, unique_classes)
         print(species_classes.head())
         inputs["species_based_class"] = inputs["species_key"].progress_apply(lambda x : self.intersect_species_classes(x,species_classes,len(unique_classes)))
-        inputs["num_classes"] = inputs["species_based_class"].progress_apply(lambda x : int(torch.tensor(x).sum()))
+        inputs["species_based_num_classes"] = inputs["species_based_class"].progress_apply(lambda x : int(torch.tensor(x).sum()))
         print(inputs.head())
         ## Get species and habitats keys and names (for the ones actually present in the dataset)
         species_ids, habitats_ids = self.get_species_habitats_ids(inputs, unique_classes, habitats_data)
         return inputs, species_ids, habitats_ids
+
+    def make_set_based_targets(self, pairs, unique_classes):
+        """Make targets using union of habitats where each set of species occurred"""
+        num_classes = len(unique_classes)
+        ## List to string for grouping
+        pairs["species_key"] = pairs["species_key"].apply(lambda x : json.dumps(x))
+        ## Get unique habitats per set
+        temp = pd.DataFrame(pairs.groupby("species_key")["maps_based_class"].unique()).reset_index()
+        print(temp.head())
+        temp["set_based_num_classes"] = temp["maps_based_class"].apply(lambda x : len(x))
+        ## One_hot encoding
+        temp["set_based_class"] = temp["maps_based_class"].apply(lambda x : self.get_onehots(x,unique_classes=unique_classes))
+        ## Joint new targets
+        pairs = pairs.join(temp.set_index("species_key")[["set_based_class","set_based_num_classes"]], on="species_key", how="inner")## List to string for grouping
+        pairs["species_key"] = pairs["species_key"].apply(lambda x : json.loads(x))
+        return pairs
     
     def remove_unwanted_classes(self, record, mask):
         return list(compress(record,mask))
@@ -127,17 +146,22 @@ class InputsTargetsBuilder():
         ## Make inputs (groupby polygon with unique species as aggregate)
         inputs = self.make_inputs(records)
         print("Made inputs with max 10 species")
-        ## Make targets
-        inputs_targets, species_ids, habitats_ids = self.make_targets(records, inputs, unique_classes, habitats_data)
+        ## Make species based targets
+        inputs_targets, species_ids, habitats_ids = self.make_species_based_targets(records, inputs, unique_classes, habitats_data)
         ## Filter rare classes
-        if self.level=="group":
+        """if self.level=="group":
             print("Removing unwanted classes")
             to_avoid = [2,23,24,31,65,9]
             mask = [val not in to_avoid for val in unique_classes]
             inputs_targets["species_based_class"] = inputs_targets["species_based_class"].progress_apply(lambda x : self.remove_unwanted_classes(x, mask))
-            inputs_targets["num_classes"] = inputs_targets["species_based_class"].progress_apply(lambda x : sum(x))
-            habitats_ids = habitats_ids.loc[~habitats_ids["class"].isin(to_avoid)]
-            print(inputs_targets.head())
-            print(habitats_ids.head())
+            inputs_targets["species_based_num_classes"] = inputs_targets["species_based_class"].progress_apply(lambda x : sum(x))
+            habitats_ids = habitats_ids.loc[~habitats_ids["class"].isin(to_avoid)]"""
+        ## To fix lists, arrays and dtypes issues in species_keys
+        with tempfile.TemporaryDirectory() as temp_dir_path:
+            inputs_targets.to_json(temp_dir_path+"/temp.json", orient="records")
+            inputs_targets = pd.read_json(temp_dir_path+"/temp.json", orient="records")
+        inputs_targets = self.make_set_based_targets(inputs_targets,unique_classes)
+        print(inputs_targets.head())
+        print(habitats_ids.head())
         return inputs_targets, species_ids, habitats_ids
 
