@@ -128,8 +128,6 @@ class Step4():
             val.to_json(final_data_path + f"{lname}_species_based_val_data.json", orient="records")
             test.to_json(final_data_path + f"{lname}_species_based_test_data.json", orient="records")
 
-
-
 if __name__=="__main__":
     """
     Global Biodiversity Information Facility x The Habitat Map of Switzerland x Wikipedia

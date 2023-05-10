@@ -1,5 +1,6 @@
 import pandas as pd
 import torch
+import json
 
 class SpeciesSplitsMaker():
     """Split data again using species instead of spatial information"""
@@ -28,6 +29,13 @@ class SpeciesSplitsMaker():
         ## Split 1 is for train and val (90%, 10%)
         val_set = split_1.sample(frac=0.1, random_state=self.random_state)
         train_set = split_1.drop(val_set.index)
+        ## Remove redundant examples from the validation set
+        train_set["species_key"] = train_set["species_key"].apply(lambda x : json.dumps(x))
+        val_set["species_key"] = val_set["species_key"].apply(lambda x : json.dumps(x))
+        train_pops = train_set["species_key"].to_list()
+        val_pops = val_set["species_key"].to_list()
+        redundant = [a for a in val_pops if a in train_pops]
+        val_set = val_set[~val_set["species_key"].isin(redundant)]
         ## Split 2 is for testing
         test_set = split_2
         return train_set, val_set, test_set
