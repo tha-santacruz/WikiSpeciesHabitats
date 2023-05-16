@@ -7,6 +7,7 @@ from itertools import compress
 tqdm.pandas()
 import json
 import tempfile
+from species_splits_maker import SpeciesSplitsMaker
 
 
 class InputsTargetsBuilder():
@@ -107,17 +108,13 @@ class InputsTargetsBuilder():
         print(habitats_ids.head())
         return species_ids, habitats_ids
 
-    def make_species_based_targets(self, records, inputs, unique_classes, habitats_data):
+    def make_species_based_targets(self, species_classes, inputs, unique_classes):
         """Make targets using intersection of habitats where species occur for each zone"""
-        ## Get classes for species
-        species_classes = self.get_species_classes(records, unique_classes)
         print(species_classes.head())
         inputs["species_based_class"] = inputs["species_key"].progress_apply(lambda x : self.intersect_species_classes(x,species_classes,len(unique_classes)))
         inputs["species_based_num_classes"] = inputs["species_based_class"].progress_apply(lambda x : int(torch.tensor(x).sum()))
         print(inputs.head())
-        ## Get species and habitats keys and names (for the ones actually present in the dataset)
-        species_ids, habitats_ids = self.get_species_habitats_ids(inputs, unique_classes, habitats_data)
-        return inputs, species_ids, habitats_ids
+        return inputs
 
     def make_set_based_targets(self, pairs, unique_classes):
         """Make targets using union of habitats where each set of species occurred"""
@@ -130,6 +127,7 @@ class InputsTargetsBuilder():
         temp["set_based_num_classes"] = temp["maps_based_class"].apply(lambda x : len(x))
         ## One_hot encoding
         temp["set_based_class"] = temp["maps_based_class"].apply(lambda x : self.get_onehots(x,unique_classes=unique_classes))
+        temp.to_json(f"processed_data/temp_{self.level}.json", orient="records")
         ## Joint new targets
         pairs = pairs.join(temp.set_index("species_key")[["set_based_class","set_based_num_classes"]], on="species_key", how="inner")## List to string for grouping
         pairs["species_key"] = pairs["species_key"].apply(lambda x : json.loads(x))
@@ -147,21 +145,30 @@ class InputsTargetsBuilder():
         inputs = self.make_inputs(records)
         print("Made inputs with max 10 species")
         ## Make species based targets
-        inputs_targets, species_ids, habitats_ids = self.make_species_based_targets(records, inputs, unique_classes, habitats_data)
-        ## Filter rare classes
-        """if self.level=="group":
-            print("Removing unwanted classes")
-            to_avoid = [2,23,24,31,65,9]
-            mask = [val not in to_avoid for val in unique_classes]
-            inputs_targets["species_based_class"] = inputs_targets["species_based_class"].progress_apply(lambda x : self.remove_unwanted_classes(x, mask))
-            inputs_targets["species_based_num_classes"] = inputs_targets["species_based_class"].progress_apply(lambda x : sum(x))
-            habitats_ids = habitats_ids.loc[~habitats_ids["class"].isin(to_avoid)]"""
+        ## Get classes for species
+        species_classes = self.get_species_classes(records, unique_classes)
+        inputs_targets = self.make_species_based_targets(species_classes, inputs, unique_classes)
+        ## Get species and habitats keys and names (for the ones actually present in the dataset)
+        species_ids, habitats_ids = self.get_species_habitats_ids(inputs_targets, unique_classes, habitats_data)
         ## To fix lists, arrays and dtypes issues in species_keys
         with tempfile.TemporaryDirectory() as temp_dir_path:
             inputs_targets.to_json(temp_dir_path+"/temp.json", orient="records")
             inputs_targets = pd.read_json(temp_dir_path+"/temp.json", orient="records")
-        inputs_targets = self.make_set_based_targets(inputs_targets,unique_classes)
-        print(inputs_targets.head())
+        spatial_inputs_targets = self.make_set_based_targets(inputs_targets,unique_classes)
+        print(spatial_inputs_targets.head())
         print(habitats_ids.head())
-        return inputs_targets, species_ids, habitats_ids
+        ## Split data again using species
+        ssm = SpeciesSplitsMaker(inputs_targets=spatial_inputs_targets.copy(), species_keys=species_ids)
+        train, val, test = ssm.process()
+        train = self.make_species_based_targets(species_classes, train.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
+        train = self.make_set_based_targets(train,unique_classes)
+        val = self.make_species_based_targets(species_classes, val.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
+        val = self.make_set_based_targets(val,unique_classes)
+        test = self.make_species_based_targets(species_classes, test.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
+        test = self.make_set_based_targets(test,unique_classes)
+        train["split"] = "train"
+        val["split"] = "val"
+        test["split"] = "test"
+        species_inputs_targets = pd.concat([train, val, test])
+        return spatial_inputs_targets, species_inputs_targets, species_ids, habitats_ids
 

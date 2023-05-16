@@ -17,7 +17,6 @@ from habitat_maps_processor import HabitatMapsProcessor
 from inputs_targets_builder import InputsTargetsBuilder
 from species_habitat_merger import SpeciesHabitatMerger
 from species_records_processor import SpeciesRecordsProcessor
-from species_splits_maker import SpeciesSplitsMaker
 
 
 class Step1():
@@ -114,19 +113,38 @@ class Step4():
             ## Examples builder
             itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level=level, filter=True)
             ## Process inputs and target files
-            inputs_targets, species_ids, habitats_ids = itb.process_data()
+            spatial_inputs_targets, species_inputs_targets, species_ids, habitats_ids = itb.process_data()
             ## Save processed files
-            inputs_targets.to_json(final_data_path + f"{lname}_all_data.json", orient="records")
+            spatial_inputs_targets.to_json(final_data_path + f"{lname}_all_data.json", orient="records")
             species_ids.to_json(final_data_path + f"{lname}_species_keys.json", orient="records")
             habitats_ids.to_json(final_data_path + f"{lname}_habitats_keys.json", orient="records")
             for split in ["train", "test", "val"]:
-                inputs_targets[inputs_targets["split"]==split].to_json(final_data_path + f"{lname}_spatial_based_{split}_data.json", orient="records")
-            ## Split data again using species
-            ssm = SpeciesSplitsMaker(inputs_targets=inputs_targets, species_keys=species_ids)
-            train, val, test = ssm.process()
-            train.to_json(final_data_path + f"{lname}_species_based_train_data.json", orient="records")
-            val.to_json(final_data_path + f"{lname}_species_based_val_data.json", orient="records")
-            test.to_json(final_data_path + f"{lname}_species_based_test_data.json", orient="records")
+                spatial_inputs_targets[spatial_inputs_targets["split"]==split].to_json(final_data_path + f"{lname}_spatial_based_{split}_data.json", orient="records")
+                species_inputs_targets[species_inputs_targets["split"]==split].to_json(final_data_path + f"{lname}_species_based_{split}_data.json", orient="records")
+
+class Step5():
+    """Step 5 : Remove Dataset Duplicates and unnecessary fiels"""   
+    def __init__(self, rm_duplicates=True, rm_fields=True):
+        print("Step 5 : Removing duplicates")
+        ## Paths
+        final_data_path = "./final_data/"
+        for level in ["L1", "L2"]:
+            for base in ["species", "spatial"]:
+                for split in ["train", "test", "val"]:
+                    file_path = final_data_path + f"{level}_{base}_based_{split}_data.json"
+                    df = pd.read_json(file_path, orient="records")
+                    if rm_fields:
+                        df = df.drop(["zone_id","shape_area","maps_based_class"], axis=1)
+                    if rm_duplicates:
+                        len_before = len(df)
+                        changed_cols = ['set_based_class',"species_based_class","species_key"]
+                        for col in changed_cols:
+                            df[col] = df[col].apply(lambda x : json.dumps(x))
+                        df = df[changed_cols].drop_duplicates()
+                        for col in changed_cols:
+                            df[col] = df[col].apply(lambda x : json.loads(x))
+                        print(f"Reduce number of rows from {len_before} to {len(df)}")
+                    df.to_json(file_path, orient="records")
 
 if __name__=="__main__":
     """
@@ -136,7 +154,7 @@ if __name__=="__main__":
     ## Parser for the execution of the steps
     parser = argparse.ArgumentParser(description="Dataset building parser")
     parser.add_argument("--STEP", dest="STEP",
-                        choices=["1","2","3","4","all"],
+                        choices=["1","2","3","4","5","all"],
                         help="{STEP 1 : habitat maps processing, SETP 2 : species maps processing, STEP 3 : habitat and species, STEP 4 : input and target pairs, STEP all : all steps}",
                         type=str)
     args = parser.parse_args()
@@ -152,10 +170,13 @@ if __name__=="__main__":
         Step3()
     elif args.STEP == "4":
         Step4()
+    elif args.STEP == "5":
+        Step5()
     elif args.STEP == "all":
         Step1()
         Step2()
         Step3()
         Step4()
+        Step5()
 
     print("Dataset is finished")

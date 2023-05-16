@@ -36,6 +36,8 @@ class SpeciesSplitsMaker():
         val_pops = val_set["species_key"].to_list()
         redundant = [a for a in val_pops if a in train_pops]
         val_set = val_set[~val_set["species_key"].isin(redundant)]
+        train_set["species_key"] = train_set["species_key"].apply(lambda x : json.loads(x))
+        val_set["species_key"] = val_set["species_key"].apply(lambda x : json.loads(x))
         ## Split 2 is for testing
         test_set = split_2
         return train_set, val_set, test_set
