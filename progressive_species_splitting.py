@@ -64,7 +64,7 @@ if __name__ == "__main__":
         overlap = len(intersection)/len(union)
         test_fraction = len(intersection)/len(t1_spe)
         ## Log metrics
-        splits_stats = pd.concat([splits_stats, pd.DataFrame(data=[frac,1-frac,len(intersection),len(union),len(t4_spe),len(t1_spe)]).T])
+        splits_stats = pd.concat([splits_stats, pd.DataFrame(data=[frac,len(intersection),len(union),len(t4_spe),len(t1_spe)]).T])
         ## Put 5% of examples in val
         t5 = t4.sample(frac=0.05, random_state=random_state)
         t4 = t4.drop(t5.index)
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         t4.reset_index(drop=True).to_json(f"./final_data/L1_progressive_{int(frac*100)}%_train_data.json", orient="records")
         t5.reset_index(drop=True).to_json(f"./final_data/L1_progressive_{int(frac*100)}%_val_data.json", orient="records")
     ## Save metrics
-    splits_stats.columns=["half1_frac","half2_frac","species_inter","species_union","train_species","test_species"]
+    splits_stats.columns=["frac","species_inter","species_union","train_species","test_species"]
     splits_stats.to_json("progressive_splits_stats.json", orient="records")
     print(splits_stats)
     ## Save test
