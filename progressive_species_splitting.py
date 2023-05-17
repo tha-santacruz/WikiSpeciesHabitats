@@ -73,7 +73,7 @@ if __name__ == "__main__":
         t5.reset_index(drop=True).to_json(f"./final_data/L1_progressive_{int(frac*100)}%_val_data.json", orient="records")
     ## Save metrics
     splits_stats.columns=["half1_frac","half2_frac","species_inter","species_union","train_species","test_species"]
-    splits_stats.to_json("progressive_splits_stats", orient="records")
+    splits_stats.to_json("progressive_splits_stats.json", orient="records")
     print(splits_stats)
     ## Save test
     t1.reset_index(drop=True).to_json("./final_data/L1_progressive_test_data.json")
