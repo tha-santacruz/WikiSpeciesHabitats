@@ -134,10 +134,11 @@ class Step5():
                     file_path = final_data_path + f"{level}_{base}_based_{split}_data.json"
                     df = pd.read_json(file_path, orient="records")
                     if rm_fields:
-                        df = df.drop(["zone_id","shape_area","maps_based_class"], axis=1)
+                        #df = df.drop(["zone_id","shape_area","maps_based_class"], axis=1)
+                        df = df.drop(["zone_id","shape_area"], axis=1)
                     if rm_duplicates:
                         len_before = len(df)
-                        changed_cols = ['set_based_class',"species_based_class","species_key"]
+                        changed_cols = ['set_based_class',"species_based_class","species_key","maps_based_class"]
                         for col in changed_cols:
                             df[col] = df[col].apply(lambda x : json.dumps(x))
                         df = df[changed_cols].drop_duplicates()

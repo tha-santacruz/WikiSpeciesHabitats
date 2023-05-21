@@ -60,7 +60,7 @@ class InputsTargetsBuilder():
             else:
                 newline = entry.copy()
                 keys = list(entry["species_key"])
-                random.shuffle(keys)
+                random.Random(42).shuffle(keys)
                 for chunk in list(self.split(keys,chunk_size=allowedSize)):
                     newline["species_key"] = chunk
                     records = pd.concat([records, pd.DataFrame(newline).T])
