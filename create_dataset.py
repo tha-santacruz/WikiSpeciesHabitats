@@ -100,8 +100,9 @@ class Step3():
 
 class Step4():
     """Step 4 : Creating inputs and targets for splits"""   
-    def __init__(self):
+    def __init__(self, random_state=42):
         print("Step 4 : Making split files")
+        self.random_state = random_state
         ## Paths
         processed_data_path = "./processed_data/"
         final_data_path = "./final_data/"
@@ -111,34 +112,36 @@ class Step4():
             else:
                 lname = "L2"
             ## Examples builder
-            itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level=level, filter=True)
+            itb = InputsTargetsBuilder(processed_data_path=processed_data_path, final_data_path=final_data_path, level=level, filter=True, random_state=self.random_state)
             ## Process inputs and target files
             spatial_inputs_targets, species_inputs_targets, species_ids, habitats_ids = itb.process_data()
             ## Save processed files
-            spatial_inputs_targets.to_json(final_data_path + f"{lname}_all_data.json", orient="records")
-            species_ids.to_json(final_data_path + f"{lname}_species_keys.json", orient="records")
-            habitats_ids.to_json(final_data_path + f"{lname}_habitats_keys.json", orient="records")
+            spatial_inputs_targets.to_json(final_data_path + f"{self.random_state}_{lname}_all_data.json", orient="records")
+            species_ids.to_json(final_data_path + f"{self.random_state}_{lname}_species_keys.json", orient="records")
+            habitats_ids.to_json(final_data_path + f"{self.random_state}_{lname}_habitats_keys.json", orient="records")
             for split in ["train", "test", "val"]:
-                spatial_inputs_targets[spatial_inputs_targets["split"]==split].to_json(final_data_path + f"{lname}_spatial_based_{split}_data.json", orient="records")
-                species_inputs_targets[species_inputs_targets["split"]==split].to_json(final_data_path + f"{lname}_species_based_{split}_data.json", orient="records")
+                spatial_inputs_targets[spatial_inputs_targets["split"]==split].to_json(final_data_path + f"{self.random_state}_{lname}_spatial_based_{split}_data.json", orient="records")
+                species_inputs_targets[species_inputs_targets["split"]==split].to_json(final_data_path + f"{self.random_state}_{lname}_species_based_{split}_data.json", orient="records")
 
 class Step5():
     """Step 5 : Remove Dataset Duplicates and unnecessary fiels"""   
-    def __init__(self, rm_duplicates=True, rm_fields=True):
+    def __init__(self, random_state=42, rm_duplicates=True, rm_fields=True):
         print("Step 5 : Removing duplicates")
+        self.random_state = random_state
         ## Paths
         final_data_path = "./final_data/"
         for level in ["L1", "L2"]:
             for base in ["species", "spatial"]:
                 for split in ["train", "test", "val"]:
-                    file_path = final_data_path + f"{level}_{base}_based_{split}_data.json"
+                    file_path = final_data_path + f"{self.random_state}_{level}_{base}_based_{split}_data.json"
                     df = pd.read_json(file_path, orient="records")
                     if rm_fields:
                         df = df.drop(["zone_id","shape_area","maps_based_class"], axis=1)
                         #df = df.drop(["zone_id","shape_area"], axis=1)
                     if rm_duplicates:
                         len_before = len(df)
-                        changed_cols = ['set_based_class',"species_based_class","species_key","maps_based_class"]
+                        changed_cols = ['set_based_class',"species_based_class","species_key"]
+                        #changed_cols = ['set_based_class',"species_based_class","species_key","maps_based_class"]
                         for col in changed_cols:
                             df[col] = df[col].apply(lambda x : json.dumps(x))
                         df = df[changed_cols].drop_duplicates()
@@ -155,7 +158,7 @@ if __name__=="__main__":
     ## Parser for the execution of the steps
     parser = argparse.ArgumentParser(description="Dataset building parser")
     parser.add_argument("--STEP", dest="STEP",
-                        choices=["1","2","3","4","5","all"],
+                        choices=["1","2","3","4","5","all","make_rs"],
                         help="{STEP 1 : habitat maps processing, SETP 2 : species maps processing, STEP 3 : habitat and species, STEP 4 : input and target pairs, STEP all : all steps}",
                         type=str)
     args = parser.parse_args()
@@ -179,5 +182,9 @@ if __name__=="__main__":
         Step3()
         Step4()
         Step5()
+    elif args.STEP == "make_rs":
+        for random_state in [1,2,3,4,5]:
+            Step4(random_state=random_state)
+            Step5(random_state=random_state)
 
     print("Dataset is finished")
