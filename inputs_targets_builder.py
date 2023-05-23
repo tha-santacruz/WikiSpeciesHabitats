@@ -12,11 +12,12 @@ from species_splits_maker import SpeciesSplitsMaker
 
 class InputsTargetsBuilder():
     """This class contains the processing steps to make inputs and targets using matched species and records"""
-    def __init__(self, processed_data_path, final_data_path, level="class", filter=True):
+    def __init__(self, processed_data_path, final_data_path, level="class", filter=True, random_state=42):
         self.processed_data_path = processed_data_path
         self.final_data_path = final_data_path
         self.level = level # "class", "group" or "type"
         self.filter = filter
+        self.random_state = random_state
 
     def load_and_merge(self):
         """Load and merge species occurences and habitat information"""
@@ -60,7 +61,7 @@ class InputsTargetsBuilder():
             else:
                 newline = entry.copy()
                 keys = list(entry["species_key"])
-                random.Random(42).shuffle(keys)
+                random.Random(self.random_state).shuffle(keys)
                 for chunk in list(self.split(keys,chunk_size=allowedSize)):
                     newline["species_key"] = chunk
                     records = pd.concat([records, pd.DataFrame(newline).T])
@@ -158,7 +159,7 @@ class InputsTargetsBuilder():
         print(spatial_inputs_targets.head())
         print(habitats_ids.head())
         ## Split data again using species
-        ssm = SpeciesSplitsMaker(inputs_targets=spatial_inputs_targets.copy(), species_keys=species_ids)
+        ssm = SpeciesSplitsMaker(inputs_targets=spatial_inputs_targets.copy(), species_keys=species_ids, random_state=self.random_state)
         train, val, test = ssm.process()
         train = self.make_species_based_targets(species_classes, train.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
         train = self.make_set_based_targets(train,unique_classes)

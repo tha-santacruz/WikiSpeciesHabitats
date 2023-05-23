@@ -4,10 +4,10 @@ import json
 
 class SpeciesSplitsMaker():
     """Split data again using species instead of spatial information"""
-    def __init__(self, inputs_targets, species_keys):
+    def __init__(self, inputs_targets, species_keys, random_state=42):
         ## Get half of species
         a = species_keys.set_index("ID")
-        self.random_state=42
+        self.random_state = random_state
         self.half1 = a.sample(frac=0.5, random_state=self.random_state)
         self.half2 = a.drop(self.half1.index)
         self.all_data = inputs_targets
