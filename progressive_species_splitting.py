@@ -35,7 +35,8 @@ if __name__ == "__main__":
         t2_spe = [item for sublist in t2_spe for item in sublist]
         t2_spe = list(set(t2_spe))
         ## This one is gonna be used as a pool for train examples
-        t3 = pd.concat([pd.read_json(f"./final_data/{random_state}_L1_species_based_train_data.json", orient="records"),pd.read_json(f"./final_data/{random_state}_L1_species_based_val_data.json", orient="records")])[["set_based_class","species_based_class","species_key"]]
+        t3 = pd.concat([pd.read_json(f"./final_data/{random_state}_L1_species_based_train_data.json", orient="records"),pd.read_json(f"./final_data/{random_state}_L1_species_based_val_data.json", orient="records")])
+        t3 = t3[["set_based_class","species_based_class","species_key"]].reset_index(drop=True)
         #t3 = pd.read_json(f"./final_data/{random_state}_L1_species_based_train_data.json", orient="records").sample(len(t1), random_state=42) ## old method
         ## To store chosen examples from t3
         t3_subset = t3
@@ -48,12 +49,17 @@ if __name__ == "__main__":
             if frac > 0:
                 ## Add examples to t2 subset and remove them from pooling
                 t2_sampled = t2_pool.sample(frac = 1/(num_steps+1-i), random_state = random_state)
+                #print(f"fraction {1/(num_steps+1-i)}")
+                #print(f"sampled {len(t2_sampled)}")
                 t2_pool = t2_pool.drop(t2_sampled.index)
                 t2_subset = pd.concat([t2_subset, t2_sampled])
                 ## Remove examples from t3 subset
                 t3_subset = t3_subset.drop(t3_subset.sample(len(t2_sampled), random_state = random_state).index)
             ## Create train/val split
-            t4 = pd.concat([t3_subset, t2_subset])
+            t4 = pd.concat([t3_subset, t2_subset]).reset_index(drop=True)
+
+            #print(f"train test {len(t4)}")
+            
             ## Compute number of species in intersection, union, etc...
             t4_spe = t4["species_key"].to_list()
             t4_spe = [item for sublist in t4_spe for item in sublist]
@@ -69,7 +75,9 @@ if __name__ == "__main__":
             t4 = t4.drop(t5.index)
             ## Save train and val
             t4.reset_index(drop=True).to_json(f"./final_data/{random_state}_L1_progressive_{int(frac*100)}%_train_data.json", orient="records")
+            #print(len(t4))
             t5.reset_index(drop=True).to_json(f"./final_data/{random_state}_L1_progressive_{int(frac*100)}%_val_data.json", orient="records")
+        #break
         ## Save test
         t1.reset_index(drop=True).to_json(f"./final_data/{random_state}_L1_progressive_test_data.json", orient="records")
     ## Save metrics
