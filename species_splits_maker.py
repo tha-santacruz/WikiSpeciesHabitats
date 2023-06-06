@@ -2,6 +2,7 @@ import pandas as pd
 import torch
 import json
 
+
 class SpeciesSplitsMaker():
     """Split data again using species instead of spatial information"""
     def __init__(self, inputs_targets, species_keys, random_state=42):
@@ -40,9 +41,11 @@ class SpeciesSplitsMaker():
         val_set["species_key"] = val_set["species_key"].apply(lambda x : json.loads(x))
         ## Split 2 is for testing
         test_set = split_2
-        return train_set, val_set, test_set
-
-
+        ## Assign split field and concatenate
+        train_set["split"] = "train"
+        test_set["split"] = "test"
+        val_set["split"] = "val"
+        return pd.concat([train_set, test_set, val_set]).reset_index(drop=True)
 
 
 
@@ -51,13 +54,9 @@ if __name__ == "__main__":
     spe_key = pd.read_json("/data/nicola/WSH/final_data/L1_species_keys.json", orient="records")
 
     spm = SpeciesSplitsMaker(inputs_targets=inp_tar, species_keys=spe_key)
-    a, b, c = spm.process()
-    print(len(a))
-    print(len(b))
-    print(len(c))
-    for split in [a,b,c]:
-        classes = torch.tensor(split["species_based_class"].to_list())
-        print(classes.sum(dim=0).div(classes.size(0)))
+    ds = spm.process()
+
+    print(ds.describe())
 
 
 

@@ -128,7 +128,7 @@ class InputsTargetsBuilder():
         temp["set_based_num_classes"] = temp["maps_based_class"].apply(lambda x : len(x))
         ## One_hot encoding
         temp["set_based_class"] = temp["maps_based_class"].apply(lambda x : self.get_onehots(x,unique_classes=unique_classes))
-        temp.to_json(f"processed_data/temp_{self.level}.json", orient="records")
+        #temp.to_json(f"processed_data/temp_{self.level}.json", orient="records")
         ## Joint new targets
         pairs = pairs.join(temp.set_index("species_key")[["set_based_class","set_based_num_classes"]], on="species_key", how="inner")## List to string for grouping
         pairs["species_key"] = pairs["species_key"].apply(lambda x : json.loads(x))
@@ -160,16 +160,21 @@ class InputsTargetsBuilder():
         print(habitats_ids.head())
         ## Split data again using species
         ssm = SpeciesSplitsMaker(inputs_targets=spatial_inputs_targets.copy(), species_keys=species_ids, random_state=self.random_state)
-        train, val, test = ssm.process()
-        train = self.make_species_based_targets(species_classes, train.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
+        species_inputs_targets = ssm.process()
+        ## Re compute targets to avoid conflicting examples
+        species_inputs_targets = self.make_species_based_targets(species_classes, species_inputs_targets.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
+        species_inputs_targets = self.make_set_based_targets(species_inputs_targets, unique_classes)
+
+        """train = self.make_species_based_targets(species_classes, train.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
         train = self.make_set_based_targets(train,unique_classes)
         val = self.make_species_based_targets(species_classes, val.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
         val = self.make_set_based_targets(val,unique_classes)
         test = self.make_species_based_targets(species_classes, test.drop(['set_based_class', 'set_based_num_classes'], axis=1), unique_classes)
         test = self.make_set_based_targets(test,unique_classes)
+
         train["split"] = "train"
         val["split"] = "val"
         test["split"] = "test"
-        species_inputs_targets = pd.concat([train, val, test])
+        species_inputs_targets = pd.concat([train, val, test])"""
         return spatial_inputs_targets, species_inputs_targets, species_ids, habitats_ids
 
