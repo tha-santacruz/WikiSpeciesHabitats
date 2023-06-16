@@ -125,7 +125,7 @@ class Step4():
 
 class Step5():
     """Step 5 : Remove Dataset Duplicates and unnecessary fiels"""   
-    def __init__(self, random_state=42, rm_duplicates=True, rm_fields=True):
+    def __init__(self, random_state=1, rm_duplicates=True, rm_fields=True):
         print("Step 5 : Removing duplicates")
         self.random_state = random_state
         ## Paths
@@ -133,6 +133,7 @@ class Step5():
         for level in ["L1", "L2"]:
             for base in ["species", "spatial"]:
                 for split in ["train", "test", "val"]:
+                    ## Filter
                     file_path = final_data_path + f"{self.random_state}_{level}_{base}_based_{split}_data.json"
                     df = pd.read_json(file_path, orient="records")
                     if rm_fields:
@@ -149,6 +150,22 @@ class Step5():
                             df[col] = df[col].apply(lambda x : json.loads(x))
                         print(f"Reduce number of rows from {len_before} to {len(df)}")
                     df.to_json(file_path, orient="records")
+                ## Remove examples of test set which are also in train and / or val
+                train_path = final_data_path + f"{self.random_state}_{level}_{base}_based_train_data.json"
+                val_path = final_data_path + f"{self.random_state}_{level}_{base}_based_val_data.json"
+                test_path = final_data_path + f"{self.random_state}_{level}_{base}_based_test_data.json"
+
+                train = pd.read_json(train_path, orient="records")
+                val = pd.read_json(val_path, orient="records")
+                test = pd.read_json(test_path, orient="records")
+
+                val = val[~val["species_key"].isin(train["species_key"].tolist())]
+                test = test[~test["species_key"].isin(val["species_key"].tolist())]
+                test = test[~test["species_key"].isin(train["species_key"].tolist())]
+
+                train.to_json(train_path, orient="records")
+                val.to_json(val_path, orient="records")
+                test.to_json(test_path, orient="records")
 
 if __name__=="__main__":
     """

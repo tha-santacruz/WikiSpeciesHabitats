@@ -50,13 +50,29 @@ class SpeciesSplitsMaker():
 
 
 if __name__ == "__main__":
-    inp_tar = pd.read_json("/data/nicola/WSH/final_data/L1_all_data.json", orient="records")
-    spe_key = pd.read_json("/data/nicola/WSH/final_data/L1_species_keys.json", orient="records")
+    inp_tar = pd.read_json("/data/nicola/WSH/final_data/1_L1_all_data.json", orient="records")
+    spe_key = pd.read_json("/data/nicola/WSH/final_data/1_L1_species_keys.json", orient="records")
 
     spm = SpeciesSplitsMaker(inputs_targets=inp_tar, species_keys=spe_key)
     ds = spm.process()
 
-    print(ds.describe())
+    inp_tar["num_species"] = inp_tar["species_key"].apply(lambda x : len(x))
+    inp_tar["num_labels"] = inp_tar["set_based_class"].apply(lambda x : sum(x))
+    
+    ds["num_species"] = ds["species_key"].apply(lambda x : len(x))
+    ds["num_labels"] = ds["set_based_class"].apply(lambda x : sum(x))
+    #print(ds.describe())
+    #print(inp_tar.num_species.value_counts())
+    #print(ds.num_species.value_counts())
+    print(inp_tar[inp_tar["num_species"]==1]["species_key"].apply(lambda x : x[0]).nunique())
+    print(ds[ds["num_species"]==1]["species_key"].apply(lambda x : x[0]).nunique())
+    #print(inp_tar.head())
+    
+    for col in ["set_based_class","species_key"]:
+        inp_tar[col] = inp_tar[col].apply(lambda x : json.dumps(x))
+    inp_tar = inp_tar[inp_tar["num_species"]==1][["set_based_class","species_key"]].drop_duplicates()
+    print(len(inp_tar))
+
 
 
 
