@@ -68,6 +68,22 @@ class SpeciesRecordsProcessor():
         intersected = intersected.rename(columns={"index_right": "grid_id"})
         return intersected
     
+    def red_flag(self, coordinates):
+        ## Flags coordintes on the 5 km grid ending with 7500 or 2500
+        rest = round(coordinates % 5000)
+        if rest in [2499, 2500, 2501]:
+            return "yes"
+        else:
+            return "no"
+        
+    def filter_coordinates(self, records):
+        ## Removing observations where both coordinates have red flags
+        records["E_redflag"] = records["E"].apply(lambda x : self.red_flag(x))
+        records["N_redflag"] = records["N"].apply(lambda x : self.red_flag(x))
+        to_remove = records.loc[records["E_redflag"]=="yes"].loc[records["N_redflag"]=="yes"]
+        records = records.drop(to_remove.index).drop(["E_redflag","N_redflag"], axis=1)
+        return records
+
     def process_records(self):
         """Processing of species records"""
         ## Loading data
@@ -81,6 +97,9 @@ class SpeciesRecordsProcessor():
         ## Trim observed species
         species_records = self.trim_species(species_records)
         print("Filtered records wrt species")
+        ## Remove obserations that are at rounded coordinates
+        species_records = self.filter_coordinates(species_records)
+        print("Removed unprecisely located observations")
         ## Clip using study area
         species_records = self.clip(species_records)
         print("Clipped records")

@@ -197,8 +197,9 @@ if __name__=="__main__":
         Step1()
         Step2()
         Step3()
-        Step4()
-        Step5()
+        for random_state in [1,2,3,4,5]:
+            Step4(random_state=random_state)
+            Step5(random_state=random_state)
     elif args.STEP == "make_rs":
         for random_state in [1,2,3,4,5]:
             Step4(random_state=random_state)

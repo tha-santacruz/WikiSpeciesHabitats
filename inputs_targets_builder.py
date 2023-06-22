@@ -49,7 +49,7 @@ class InputsTargetsBuilder():
         records = records[["zone_id","species_key","split","shape_area",self.level]].rename(columns={self.level:"maps_based_class"})
         records_unbalanced = records.groupby(by=["zone_id","maps_based_class","split","shape_area"])["species_key"].agg("unique").reset_index()
         records_unbalanced["species_count"] = records_unbalanced["species_key"].apply(lambda x : len(x))
-        ## Remove zones with too much observed species
+        ## Remove zones with too much observed species (for remaining suspicious points after the removal of rounded coordinates when processing species records)
         records_unbalanced = records_unbalanced[records_unbalanced["species_count"]<=100].reset_index().drop("index", axis=1)
         ## Divide large samples into smaller ones
         allowedSize = 10
