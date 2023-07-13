@@ -1,0 +1,11 @@
+#!/bin/bash -l
+
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 18
+#SBATCH --mem 32G
+#SBATCH --time 48:00:00
+
+# include other commands here that might be needed prior to launching
+
+python doc2vec_wikipedia_training.py

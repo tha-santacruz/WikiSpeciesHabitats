@@ -1,0 +1,13 @@
+#!/bin/bash -l
+
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 16
+#SBATCH --mem 16G
+#SBATCH --time 00:20:00
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+
+python run.py --RANDOM_STATE 3 --EMBEDDING longformer --LEVEL L1 --SPLITTING progressive --FRACTION 50 --MERGE_METHOD fusion --RUN_MODE train --JOB_ID 143 --LOAD_CHECKPOINT no 
+python run.py --RANDOM_STATE 3 --EMBEDDING longformer --LEVEL L1 --SPLITTING progressive --FRACTION 50 --MERGE_METHOD fusion --RUN_MODE test --JOB_ID 143 --LOAD_CHECKPOINT yes 

@@ -1,0 +1,13 @@
+#!/bin/bash -l
+
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 8
+#SBATCH --mem 16G
+#SBATCH --time 00:20:00
+#SBATCH --partition=debug
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+
+python run.py --RANDOM_STATE 1 --EMBEDDING doc2vec --LEVEL L1 --SPLITTING progressive --FRACTION 10 --MERGE_METHOD fusion --RUN_MODE train --LOAD_CHECKPOINT no --WANDB_LOGS no
+python run.py --RANDOM_STATE 1 --EMBEDDING doc2vec --LEVEL L1 --SPLITTING progressive --FRACTION 10 --MERGE_METHOD fusion --RUN_MODE test --LOAD_CHECKPOINT yes --WANDB_LOGS no

@@ -1,0 +1,15 @@
+#!/bin/bash -l
+
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 8
+#SBATCH --mem 16G
+#SBATCH --time 01:00:00
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+
+python run.py --EMBEDDING longformer --FUSION prod --NORMALIZE no --RUN_MODE train
+python run.py --EMBEDDING longformer --FUSION prod --NORMALIZE yes --RUN_MODE train
+python run.py --EMBEDDING longformer --FUSION mean --NORMALIZE no --RUN_MODE train
+python run.py --EMBEDDING longformer --FUSION mean --NORMALIZE yes --RUN_MODE train

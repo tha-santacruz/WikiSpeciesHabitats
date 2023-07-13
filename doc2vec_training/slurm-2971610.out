@@ -1,0 +1,61 @@
+2023-06-22 09:01:26,790 : INFO : Doc2Vec lifecycle event {'params': 'Doc2Vec<dm/m,d768,n5,w8,mc5,s0.001,t17>', 'datetime': '2023-06-22T09:01:26.780233', 'gensim': '4.2.0', 'python': '3.6.8 (default, Sep  9 2021, 07:49:02) \n[GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]', 'platform': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-redhat-8.5-Ootpa', 'event': 'created'}
+2023-06-22 09:01:26,790 : INFO : collecting all words and their counts
+2023-06-22 09:01:26,793 : INFO : PROGRESS: at example #0, processed 0 words (0 words/s), 0 word types, 0 tags
+2023-06-22 09:04:15,125 : INFO : PROGRESS: at example #500000, processed 670140269 words (3981077 words/s), 3243304 word types, 500000 tags
+2023-06-22 09:05:51,226 : INFO : PROGRESS: at example #1000000, processed 1041550855 words (3864869 words/s), 4503496 word types, 1000000 tags
+2023-06-22 09:07:08,116 : INFO : PROGRESS: at example #1500000, processed 1333902086 words (3802233 words/s), 5454633 word types, 1500000 tags
+2023-06-22 09:08:14,015 : INFO : PROGRESS: at example #2000000, processed 1583336660 words (3785107 words/s), 6233581 word types, 2000000 tags
+2023-06-22 09:09:19,479 : INFO : PROGRESS: at example #2500000, processed 1828458553 words (3744371 words/s), 6993121 word types, 2500000 tags
+2023-06-22 09:10:24,360 : INFO : PROGRESS: at example #3000000, processed 2069030476 words (3707899 words/s), 7725947 word types, 3000000 tags
+2023-06-22 09:11:27,820 : INFO : PROGRESS: at example #3500000, processed 2308442286 words (3772682 words/s), 8414816 word types, 3500000 tags
+2023-06-22 09:12:30,488 : INFO : PROGRESS: at example #4000000, processed 2536978127 words (3646779 words/s), 9040276 word types, 4000000 tags
+2023-06-22 09:13:29,674 : INFO : PROGRESS: at example #4500000, processed 2757135078 words (3719742 words/s), 9671819 word types, 4500000 tags
+2023-06-22 09:14:33,352 : INFO : PROGRESS: at example #5000000, processed 2986349133 words (3599594 words/s), 10294857 word types, 5000000 tags
+2023-06-22 09:15:44,131 : INFO : collected 10730194 word types and 5365031 unique tags from a corpus of 5365031 examples and 3146240144 words
+2023-06-22 09:15:49,657 : INFO : Doc2Vec lifecycle event {'msg': 'max_final_vocab=1000000 and min_count=5 resulted in calc_min_count=24, effective_min_count=24', 'datetime': '2023-06-22T09:15:49.657059', 'gensim': '4.2.0', 'python': '3.6.8 (default, Sep  9 2021, 07:49:02) \n[GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]', 'platform': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-redhat-8.5-Ootpa', 'event': 'prepare_vocab'}
+2023-06-22 09:15:49,657 : INFO : Creating a fresh vocabulary
+2023-06-22 09:15:55,931 : INFO : Doc2Vec lifecycle event {'msg': 'effective_min_count=24 retains 998928 unique words (9.31% of original 10730194, drops 9731266)', 'datetime': '2023-06-22T09:15:55.931361', 'gensim': '4.2.0', 'python': '3.6.8 (default, Sep  9 2021, 07:49:02) \n[GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]', 'platform': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-redhat-8.5-Ootpa', 'event': 'prepare_vocab'}
+2023-06-22 09:15:55,931 : INFO : Doc2Vec lifecycle event {'msg': 'effective_min_count=24 leaves 3117063728 word corpus (99.07% of original 3146240144, drops 29176416)', 'datetime': '2023-06-22T09:15:55.931569', 'gensim': '4.2.0', 'python': '3.6.8 (default, Sep  9 2021, 07:49:02) \n[GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]', 'platform': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-redhat-8.5-Ootpa', 'event': 'prepare_vocab'}
+2023-06-22 09:16:00,825 : INFO : deleting the raw counts dictionary of 10730194 items
+2023-06-22 09:16:00,971 : INFO : sample=0.001 downsamples 23 most-common words
+2023-06-22 09:16:00,971 : INFO : Doc2Vec lifecycle event {'msg': 'downsampling leaves estimated 2536170556.7678967 word corpus (81.4%% of prior 3117063728)', 'datetime': '2023-06-22T09:16:00.971635', 'gensim': '4.2.0', 'python': '3.6.8 (default, Sep  9 2021, 07:49:02) \n[GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]', 'platform': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-redhat-8.5-Ootpa', 'event': 'prepare_vocab'}
+2023-06-22 09:16:09,670 : INFO : estimated required memory for 998928 words and 768 dimensions: 24191259064 bytes
+2023-06-22 09:16:09,670 : INFO : resetting layer weights
+2023-06-22 09:16:29,505 : INFO : Doc2Vec lifecycle event {'msg': 'training model with 17 workers on 998928 vocabulary and 768 features, using sg=0 hs=0 sample=0.001 negative=5 window=8 shrink_windows=True', 'datetime': '2023-06-22T09:16:29.505659', 'gensim': '4.2.0', 'python': '3.6.8 (default, Sep  9 2021, 07:49:02) \n[GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]', 'platform': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-redhat-8.5-Ootpa', 'event': 'train'}
+2023-06-22 09:16:30,513 : INFO : EPOCH 0 - PROGRESS: at 0.00% examples, 579046 words/s, in_qsize 0, out_qsize 0
+2023-06-22 09:46:30,515 : INFO : EPOCH 0 - PROGRESS: at 55.23% examples, 912362 words/s, in_qsize 33, out_qsize 0
+2023-06-22 10:04:42,354 : INFO : EPOCH 0: training on 3146240144 raw words (2525290790 effective words) took 2892.8s, 872944 effective words/s
+2023-06-22 10:04:43,365 : INFO : EPOCH 1 - PROGRESS: at 0.01% examples, 1181876 words/s, in_qsize 0, out_qsize 0
+2023-06-22 10:34:43,373 : INFO : EPOCH 1 - PROGRESS: at 56.30% examples, 924206 words/s, in_qsize 32, out_qsize 1
+2023-06-22 10:52:26,670 : INFO : EPOCH 1: training on 3146240144 raw words (2525284817 effective words) took 2864.3s, 881638 effective words/s
+2023-06-22 10:52:27,677 : INFO : EPOCH 2 - PROGRESS: at 0.01% examples, 1186479 words/s, in_qsize 0, out_qsize 0
+2023-06-22 11:22:27,689 : INFO : EPOCH 2 - PROGRESS: at 56.15% examples, 922619 words/s, in_qsize 33, out_qsize 1
+2023-06-22 11:40:15,467 : INFO : EPOCH 2: training on 3146240144 raw words (2525290231 effective words) took 2868.8s, 880262 effective words/s
+2023-06-22 11:40:16,473 : INFO : EPOCH 3 - PROGRESS: at 0.01% examples, 1187191 words/s, in_qsize 0, out_qsize 1
+2023-06-22 12:10:16,473 : INFO : EPOCH 3 - PROGRESS: at 56.17% examples, 922915 words/s, in_qsize 33, out_qsize 0
+2023-06-22 12:28:04,203 : INFO : EPOCH 3: training on 3146240144 raw words (2525273223 effective words) took 2868.7s, 880275 effective words/s
+2023-06-22 12:28:05,212 : INFO : EPOCH 4 - PROGRESS: at 0.01% examples, 1195708 words/s, in_qsize 0, out_qsize 0
+2023-06-22 12:58:05,220 : INFO : EPOCH 4 - PROGRESS: at 56.49% examples, 926385 words/s, in_qsize 33, out_qsize 0
+2023-06-22 13:15:41,352 : INFO : EPOCH 4: training on 3146240144 raw words (2525286442 effective words) took 2857.1s, 883850 effective words/s
+2023-06-22 13:15:42,358 : INFO : EPOCH 5 - PROGRESS: at 0.01% examples, 1199323 words/s, in_qsize 0, out_qsize 0
+2023-06-22 13:45:42,362 : INFO : EPOCH 5 - PROGRESS: at 56.89% examples, 930922 words/s, in_qsize 34, out_qsize 0
+2023-06-22 14:02:26,257 : INFO : EPOCH 5: training on 3146240144 raw words (2525293651 effective words) took 2804.9s, 900315 effective words/s
+2023-06-22 14:02:27,263 : INFO : EPOCH 6 - PROGRESS: at 0.01% examples, 1250960 words/s, in_qsize 0, out_qsize 1
+2023-06-22 14:32:27,268 : INFO : EPOCH 6 - PROGRESS: at 60.44% examples, 971772 words/s, in_qsize 34, out_qsize 0
+2023-06-22 14:47:35,530 : INFO : EPOCH 6: training on 3146240144 raw words (2525286269 effective words) took 2709.3s, 932092 effective words/s
+2023-06-22 14:47:36,538 : INFO : EPOCH 7 - PROGRESS: at 0.01% examples, 1249982 words/s, in_qsize 0, out_qsize 1
+2023-06-22 15:17:36,539 : INFO : EPOCH 7 - PROGRESS: at 60.38% examples, 971051 words/s, in_qsize 33, out_qsize 0
+2023-06-22 15:32:46,042 : INFO : EPOCH 7: training on 3146240144 raw words (2525285224 effective words) took 2710.5s, 931665 effective words/s
+2023-06-22 15:32:47,054 : INFO : EPOCH 8 - PROGRESS: at 0.01% examples, 1256378 words/s, in_qsize 0, out_qsize 0
+2023-06-22 16:02:47,065 : INFO : EPOCH 8 - PROGRESS: at 60.42% examples, 971571 words/s, in_qsize 34, out_qsize 0
+2023-06-22 16:17:56,817 : INFO : EPOCH 8: training on 3146240144 raw words (2525304494 effective words) took 2710.8s, 931582 effective words/s
+2023-06-22 16:17:57,824 : INFO : EPOCH 9 - PROGRESS: at 0.01% examples, 1250030 words/s, in_qsize 0, out_qsize 0
+2023-06-22 16:47:57,824 : INFO : EPOCH 9 - PROGRESS: at 60.41% examples, 971411 words/s, in_qsize 33, out_qsize 0
+2023-06-22 17:03:07,405 : INFO : EPOCH 9: training on 3146240144 raw words (2525279735 effective words) took 2710.6s, 931637 effective words/s
+2023-06-22 17:03:07,406 : INFO : Doc2Vec lifecycle event {'msg': 'training on 31462401440 raw words (25252874876 effective words) took 27997.9s, 901956 effective words/s', 'datetime': '2023-06-22T17:03:07.406029', 'gensim': '4.2.0', 'python': '3.6.8 (default, Sep  9 2021, 07:49:02) \n[GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]', 'platform': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-redhat-8.5-Ootpa', 'event': 'train'}
+2023-06-22 17:03:07,406 : INFO : Doc2Vec lifecycle event {'fname_or_handle': '/scratch/santacro/doc2vec_dm_768.model', 'separately': 'None', 'sep_limit': 10485760, 'ignore': frozenset(), 'datetime': '2023-06-22T17:03:07.406233', 'gensim': '4.2.0', 'python': '3.6.8 (default, Sep  9 2021, 07:49:02) \n[GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]', 'platform': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-redhat-8.5-Ootpa', 'event': 'saving'}
+2023-06-22 17:03:07,406 : INFO : storing np array 'vectors' to /scratch/santacro/doc2vec_dm_768.model.dv.vectors.npy
+2023-06-22 17:03:11,404 : INFO : storing np array 'vectors' to /scratch/santacro/doc2vec_dm_768.model.wv.vectors.npy
+2023-06-22 17:03:12,140 : INFO : storing np array 'syn1neg' to /scratch/santacro/doc2vec_dm_768.model.syn1neg.npy
+2023-06-22 17:03:12,838 : INFO : not storing attribute cum_table
+2023-06-22 17:03:16,187 : INFO : saved /scratch/santacro/doc2vec_dm_768.model

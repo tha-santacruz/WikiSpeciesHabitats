@@ -1,0 +1,5 @@
+module purge
+module load gcc cuda cudnn python
+virtualenv --system-site-packages -p python3 eceo
+source eceo/bin/activate
+pip install pandas torch transformers tqdm numpy nltk

@@ -1,0 +1,101 @@
+/usr/share/lmod/lmod/init/sh: line 20: /usr/share/lmod/lmod/libexec//clearMT_cmd: No such file or directory
+wandb: Currently logged in as: tha-santacruz (msc-nicola). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.4
+wandb: Run data is saved locally in /home/santacro/masters_thesis/all_runs/wandb/run-20230626_220111-4612e8fi
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run pretty-plasma-52
+wandb: ⭐️ View project at https://wandb.ai/msc-nicola/train_all_MLC
+wandb: 🚀 View run at https://wandb.ai/msc-nicola/train_all_MLC/runs/4612e8fi
+Running job on GPU : Tesla V100-PCIE-32GB
+Namespace(BATCH_SIZE=128, CHECKPOINTS_PATH='/scratch/izar/santacro/checkpoints/', DATASET_PATH='/scratch/izar/santacro/final_data/', DEVICE='cuda:0', EMBEDDING='longformer', EPOCH_NUM=300, FRACTION=100, HIDDEN_SIZE=8192, JOB_ID=52, LEARNING_RATE=1e-05, LEVEL='L1', LOAD_CHECKPOINT='no', MERGE_METHOD='fusion', MIN_LEARNING_RATE=1e-06, NUM_WORKERS=8, RANDOM_STATE=1, RUN_MODE='train', SAVE_CHECKPOINTS='yes', SPLITTING='progressive', TARGET_BASE='set', WANDB_ENTITY='msc-nicola', WANDB_LOGS='yes', WANDB_PROJECT='all_MLC')
+Number of train samples : 9499
+Number of val samples : 1056
+Number of test samples : 5605
+  0%|          | 0/300 [00:00<?, ?it/s]train/val metrics at epoch 1 | loss : 1.16/1.17 | micro_F1 : 0.22/0.23:   0%|          | 0/300 [00:03<?, ?it/s]train/val metrics at epoch 1 | loss : 1.16/1.17 | micro_F1 : 0.22/0.23:   0%|          | 1/300 [00:03<18:43,  3.76s/it]train/val metrics at epoch 2 | loss : 1.11/1.11 | micro_F1 : 0.26/0.29:   0%|          | 1/300 [00:05<18:43,  3.76s/it]train/val metrics at epoch 2 | loss : 1.11/1.11 | micro_F1 : 0.26/0.29:   1%|          | 2/300 [00:05<13:40,  2.75s/it]train/val metrics at epoch 3 | loss : 1.09/1.09 | micro_F1 : 0.29/0.29:   1%|          | 2/300 [00:07<13:40,  2.75s/it]train/val metrics at epoch 3 | loss : 1.09/1.09 | micro_F1 : 0.29/0.29:   1%|          | 3/300 [00:07<12:03,  2.44s/it]train/val metrics at epoch 4 | loss : 1.07/1.08 | micro_F1 : 0.30/0.30:   1%|          | 3/300 [00:09<12:03,  2.44s/it]train/val metrics at epoch 4 | loss : 1.07/1.08 | micro_F1 : 0.30/0.30:   1%|▏         | 4/300 [00:09<11:13,  2.27s/it]train/val metrics at epoch 5 | loss : 1.05/1.09 | micro_F1 : 0.32/0.34:   1%|▏         | 4/300 [00:11<11:13,  2.27s/it]train/val metrics at epoch 5 | loss : 1.05/1.09 | micro_F1 : 0.32/0.34:   2%|▏         | 5/300 [00:11<10:42,  2.18s/it]train/val metrics at epoch 6 | loss : 1.03/1.09 | micro_F1 : 0.33/0.33:   2%|▏         | 5/300 [00:13<10:42,  2.18s/it]train/val metrics at epoch 6 | loss : 1.03/1.09 | micro_F1 : 0.33/0.33:   2%|▏         | 6/300 [00:13<10:22,  2.12s/it]train/val metrics at epoch 7 | loss : 1.01/1.06 | micro_F1 : 0.34/0.30:   2%|▏         | 6/300 [00:15<10:22,  2.12s/it]train/val metrics at epoch 7 | loss : 1.01/1.06 | micro_F1 : 0.34/0.30:   2%|▏         | 7/300 [00:15<10:10,  2.08s/it]train/val metrics at epoch 8 | loss : 0.99/1.05 | micro_F1 : 0.35/0.35:   2%|▏         | 7/300 [00:17<10:10,  2.08s/it]train/val metrics at epoch 8 | loss : 0.99/1.05 | micro_F1 : 0.35/0.35:   3%|▎         | 8/300 [00:17<10:02,  2.06s/it]train/val metrics at epoch 9 | loss : 0.97/1.06 | micro_F1 : 0.36/0.35:   3%|▎         | 8/300 [00:19<10:02,  2.06s/it]train/val metrics at epoch 9 | loss : 0.97/1.06 | micro_F1 : 0.36/0.35:   3%|▎         | 9/300 [00:19<09:56,  2.05s/it]train/val metrics at epoch 10 | loss : 0.96/1.03 | micro_F1 : 0.37/0.36:   3%|▎         | 9/300 [00:21<09:56,  2.05s/it]train/val metrics at epoch 10 | loss : 0.96/1.03 | micro_F1 : 0.37/0.36:   3%|▎         | 10/300 [00:21<09:47,  2.03s/it]train/val metrics at epoch 11 | loss : 0.95/1.05 | micro_F1 : 0.38/0.35:   3%|▎         | 10/300 [00:23<09:47,  2.03s/it]train/val metrics at epoch 11 | loss : 0.95/1.05 | micro_F1 : 0.38/0.35:   4%|▎         | 11/300 [00:23<09:42,  2.01s/it]train/val metrics at epoch 12 | loss : 0.93/1.04 | micro_F1 : 0.37/0.40:   4%|▎         | 11/300 [00:25<09:42,  2.01s/it]train/val metrics at epoch 12 | loss : 0.93/1.04 | micro_F1 : 0.37/0.40:   4%|▍         | 12/300 [00:25<09:39,  2.01s/it]train/val metrics at epoch 13 | loss : 0.92/1.09 | micro_F1 : 0.39/0.41:   4%|▍         | 12/300 [00:27<09:39,  2.01s/it]train/val metrics at epoch 13 | loss : 0.92/1.09 | micro_F1 : 0.39/0.41:   4%|▍         | 13/300 [00:27<09:37,  2.01s/it]train/val metrics at epoch 14 | loss : 0.90/1.05 | micro_F1 : 0.39/0.39:   4%|▍         | 13/300 [00:29<09:37,  2.01s/it]train/val metrics at epoch 14 | loss : 0.90/1.05 | micro_F1 : 0.39/0.39:   5%|▍         | 14/300 [00:29<09:33,  2.01s/it]train/val metrics at epoch 15 | loss : 0.89/1.03 | micro_F1 : 0.40/0.35:   5%|▍         | 14/300 [00:31<09:33,  2.01s/it]train/val metrics at epoch 15 | loss : 0.89/1.03 | micro_F1 : 0.40/0.35:   5%|▌         | 15/300 [00:31<09:32,  2.01s/it]train/val metrics at epoch 16 | loss : 0.88/1.06 | micro_F1 : 0.40/0.35:   5%|▌         | 15/300 [00:33<09:32,  2.01s/it]train/val metrics at epoch 16 | loss : 0.88/1.06 | micro_F1 : 0.40/0.35:   5%|▌         | 16/300 [00:33<09:28,  2.00s/it]train/val metrics at epoch 17 | loss : 0.87/1.05 | micro_F1 : 0.40/0.37:   5%|▌         | 16/300 [00:35<09:28,  2.00s/it]train/val metrics at epoch 17 | loss : 0.87/1.05 | micro_F1 : 0.40/0.37:   6%|▌         | 17/300 [00:35<09:30,  2.02s/it]train/val metrics at epoch 18 | loss : 0.87/1.05 | micro_F1 : 0.40/0.35:   6%|▌         | 17/300 [00:37<09:30,  2.02s/it]train/val metrics at epoch 18 | loss : 0.87/1.05 | micro_F1 : 0.40/0.35:   6%|▌         | 18/300 [00:38<09:30,  2.02s/it]train/val metrics at epoch 19 | loss : 0.86/1.05 | micro_F1 : 0.40/0.37:   6%|▌         | 18/300 [00:39<09:30,  2.02s/it]train/val metrics at epoch 19 | loss : 0.86/1.05 | micro_F1 : 0.40/0.37:   6%|▋         | 19/300 [00:39<09:25,  2.01s/it]train/val metrics at epoch 20 | loss : 0.85/1.03 | micro_F1 : 0.41/0.38:   6%|▋         | 19/300 [00:41<09:25,  2.01s/it]train/val metrics at epoch 20 | loss : 0.85/1.03 | micro_F1 : 0.41/0.38:   7%|▋         | 20/300 [00:42<09:23,  2.01s/it]train/val metrics at epoch 21 | loss : 0.85/1.05 | micro_F1 : 0.41/0.37:   7%|▋         | 20/300 [00:43<09:23,  2.01s/it]train/val metrics at epoch 21 | loss : 0.85/1.05 | micro_F1 : 0.41/0.37:   7%|▋         | 21/300 [00:44<09:25,  2.03s/it]train/val metrics at epoch 22 | loss : 0.85/1.07 | micro_F1 : 0.41/0.38:   7%|▋         | 21/300 [00:45<09:25,  2.03s/it]train/val metrics at epoch 22 | loss : 0.85/1.07 | micro_F1 : 0.41/0.38:   7%|▋         | 22/300 [00:46<09:22,  2.02s/it]train/val metrics at epoch 23 | loss : 0.85/1.07 | micro_F1 : 0.41/0.38:   7%|▋         | 22/300 [00:47<09:22,  2.02s/it]train/val metrics at epoch 23 | loss : 0.85/1.07 | micro_F1 : 0.41/0.38:   8%|▊         | 23/300 [00:48<09:20,  2.02s/it]train/val metrics at epoch 24 | loss : 0.85/1.04 | micro_F1 : 0.41/0.38:   8%|▊         | 23/300 [00:49<09:20,  2.02s/it]train/val metrics at epoch 24 | loss : 0.85/1.04 | micro_F1 : 0.41/0.38:   8%|▊         | 24/300 [00:50<09:15,  2.01s/it]train/val metrics at epoch 25 | loss : 0.84/1.05 | micro_F1 : 0.41/0.37:   8%|▊         | 24/300 [00:51<09:15,  2.01s/it]train/val metrics at epoch 25 | loss : 0.84/1.05 | micro_F1 : 0.41/0.37:   8%|▊         | 24/300 [00:52<10:06,  2.20s/it]
+wandb: Waiting for W&B process to finish... (success).
+wandb: 
+wandb: Run history:
+wandb:          epoch ▁
+wandb:  learning rate ▁
+wandb:           time ▁
+wandb:     train loss ▁
+wandb: train macro F1 ▁
+wandb: train micro F1 ▁
+wandb:       val loss ▁
+wandb:   val macro F1 ▁
+wandb:   val micro F1 ▁
+wandb: 
+wandb: Run summary:
+wandb:          epoch 25
+wandb:  learning rate 0.0
+wandb:           time 54.15905
+wandb:     train loss 0.84151
+wandb: train macro F1 0.34352
+wandb: train micro F1 0.41131
+wandb:       val loss 1.04564
+wandb:   val macro F1 0.28772
+wandb:   val micro F1 0.37086
+wandb: 
+wandb: 🚀 View run pretty-plasma-52 at: https://wandb.ai/msc-nicola/train_all_MLC/runs/4612e8fi
+wandb: Synced 5 W&B file(s), 1 media file(s), 1 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230626_220111-4612e8fi/logs
+Exception in thread ChkStopThr:
+Traceback (most recent call last):
+  File "/ssoft/spack/arvine/v1/opt/spack/linux-rhel7-skylake_avx512/gcc-8.4.0/python-3.7.7-drpdlwdbo3lmtkcbckq227ypnzno4ek3/lib/python3.7/threading.py", line 926, in _bootstrap_inner
+    self.run()
+  File "/ssoft/spack/arvine/v1/opt/spack/linux-rhel7-skylake_avx512/gcc-8.4.0/python-3.7.7-drpdlwdbo3lmtkcbckq227ypnzno4ek3/lib/python3.7/threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/wandb_run.py", line 280, in check_stop_status
+    process=_process_stop_status,
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/wandb_run.py", line 213, in _loop_check_status
+    local_handle = request()
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/interface/interface.py", line 789, in deliver_stop_status
+    return self._deliver_stop_status(status)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/interface/interface_shared.py", line 585, in _deliver_stop_status
+    return self._deliver_record(record)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/interface/interface_shared.py", line 560, in _deliver_record
+    handle = mailbox._deliver_record(record, interface=self)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/lib/mailbox.py", line 455, in _deliver_record
+    interface._publish(record)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/interface/interface_sock.py", line 51, in _publish
+    self._sock_client.send_record_publish(record)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/lib/sock_client.py", line 221, in send_record_publish
+    self.send_server_request(server_req)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/lib/sock_client.py", line 155, in send_server_request
+    self._send_message(msg)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/lib/sock_client.py", line 152, in _send_message
+    self._sendall_with_error_handle(header + data)
+  File "/home/santacro/masters_thesis/all_runs/eceo/lib/python3.7/site-packages/wandb/sdk/lib/sock_client.py", line 130, in _sendall_with_error_handle
+    sent = self._sock.send(data)
+BrokenPipeError: [Errno 32] Broken pipe
+
+wandb: Currently logged in as: tha-santacruz (msc-nicola). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.4
+wandb: Run data is saved locally in /home/santacro/masters_thesis/all_runs/wandb/run-20230626_220227-pztefs6d
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run atomic-music-52
+wandb: ⭐️ View project at https://wandb.ai/msc-nicola/test_all_MLC
+wandb: 🚀 View run at https://wandb.ai/msc-nicola/test_all_MLC/runs/pztefs6d
+Running job on GPU : Tesla V100-PCIE-32GB
+Namespace(BATCH_SIZE=128, CHECKPOINTS_PATH='/scratch/izar/santacro/checkpoints/', DATASET_PATH='/scratch/izar/santacro/final_data/', DEVICE='cuda:0', EMBEDDING='longformer', EPOCH_NUM=300, FRACTION=100, HIDDEN_SIZE=8192, JOB_ID=52, LEARNING_RATE=1e-05, LEVEL='L1', LOAD_CHECKPOINT='yes', MERGE_METHOD='fusion', MIN_LEARNING_RATE=1e-06, NUM_WORKERS=8, RANDOM_STATE=1, RUN_MODE='test', SAVE_CHECKPOINTS='yes', SPLITTING='progressive', TARGET_BASE='set', WANDB_ENTITY='msc-nicola', WANDB_LOGS='yes', WANDB_PROJECT='all_MLC')
+Number of train samples : 9499
+Number of val samples : 1056
+Number of test samples : 5605
+Loaded model state dict from file /scratch/izar/santacro/checkpoints//1_longformer_embedding_L1_level_fusion_merging_progressive_100%_8192.pth
+wandb: Waiting for W&B process to finish... (success).
+wandb: 
+wandb: Run history:
+wandb:     test loss ▁
+wandb: test macro F1 ▁
+wandb:  test macro H ▁
+wandb: test micro F1 ▁
+wandb: 
+wandb: Run summary:
+wandb:     test loss 1.04963
+wandb: test macro F1 0.30517
+wandb:  test macro H 2.35111
+wandb: test micro F1 0.38282
+wandb: 
+wandb: 🚀 View run atomic-music-52 at: https://wandb.ai/msc-nicola/test_all_MLC/runs/pztefs6d
+wandb: Synced 4 W&B file(s), 10 media file(s), 1 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230626_220227-pztefs6d/logs

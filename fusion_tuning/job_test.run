@@ -1,0 +1,13 @@
+#!/bin/bash -l
+
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 8
+#SBATCH --mem 16G
+#SBATCH --time 01:00:00
+#SBATCH --partition=debug
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+
+python run.py --EMBEDDING doc2vec --FUSION sum --NORMALIZE no --RUN_MODE train --WANDB_LOGS no
+python run.py --EMBEDDING doc2vec --FUSION sum --NORMALIZE no --RUN_MODE test --LOAD_CHECKPOINT yes

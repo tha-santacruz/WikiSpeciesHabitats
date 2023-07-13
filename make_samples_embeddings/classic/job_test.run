@@ -1,0 +1,12 @@
+#!/bin/bash -l
+
+#SBATCH --nodes 1
+#SBATCH --ntasks 1
+#SBATCH --cpus-per-task 4
+#SBATCH --mem 32G
+#SBATCH --time 00:20:00
+#SBATCH --partition=debug
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+
+python run.py --RANDOM_STATE 1 --LEVEL L1 --SPLITTING spatial --SPLIT train

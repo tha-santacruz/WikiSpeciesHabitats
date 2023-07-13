@@ -1,0 +1,71 @@
+/usr/share/lmod/lmod/init/sh: line 20: /usr/share/lmod/lmod/libexec//clearMT_cmd: No such file or directory
+wandb: Currently logged in as: tha-santacruz (msc-nicola). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.4
+wandb: Run data is saved locally in /home/santacro/masters_thesis/all_runs/wandb/run-20230627_033448-tv132r27
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run solar-yogurt-252
+wandb: ⭐️ View project at https://wandb.ai/msc-nicola/train_all_MLC
+wandb: 🚀 View run at https://wandb.ai/msc-nicola/train_all_MLC/runs/tv132r27
+Running job on GPU : Tesla V100-PCIE-32GB
+Namespace(BATCH_SIZE=128, CHECKPOINTS_PATH='/scratch/izar/santacro/checkpoints/', DATASET_PATH='/scratch/izar/santacro/final_data/', DEVICE='cuda:0', EMBEDDING='longformer', EPOCH_NUM=300, FRACTION=50, HIDDEN_SIZE=8192, JOB_ID=249, LEARNING_RATE=1e-05, LEVEL='L1', LOAD_CHECKPOINT='no', MERGE_METHOD='fusion', MIN_LEARNING_RATE=1e-06, NUM_WORKERS=8, RANDOM_STATE=5, RUN_MODE='train', SAVE_CHECKPOINTS='yes', SPLITTING='progressive', TARGET_BASE='set', WANDB_ENTITY='msc-nicola', WANDB_LOGS='yes', WANDB_PROJECT='all_MLC')
+Number of train samples : 9802
+Number of val samples : 1089
+Number of test samples : 5400
+  0%|          | 0/300 [00:00<?, ?it/s]train/val metrics at epoch 1 | loss : 1.17/1.18 | micro_F1 : 0.22/0.24:   0%|          | 0/300 [00:02<?, ?it/s]train/val metrics at epoch 1 | loss : 1.17/1.18 | micro_F1 : 0.22/0.24:   0%|          | 1/300 [00:02<13:28,  2.70s/it]train/val metrics at epoch 2 | loss : 1.12/1.15 | micro_F1 : 0.26/0.26:   0%|          | 1/300 [00:04<13:28,  2.70s/it]train/val metrics at epoch 2 | loss : 1.12/1.15 | micro_F1 : 0.26/0.26:   1%|          | 2/300 [00:04<11:35,  2.33s/it]train/val metrics at epoch 3 | loss : 1.09/1.13 | micro_F1 : 0.29/0.29:   1%|          | 2/300 [00:06<11:35,  2.33s/it]train/val metrics at epoch 3 | loss : 1.09/1.13 | micro_F1 : 0.29/0.29:   1%|          | 3/300 [00:06<11:01,  2.23s/it]train/val metrics at epoch 4 | loss : 1.07/1.12 | micro_F1 : 0.31/0.32:   1%|          | 3/300 [00:08<11:01,  2.23s/it]train/val metrics at epoch 4 | loss : 1.07/1.12 | micro_F1 : 0.31/0.32:   1%|▏         | 4/300 [00:08<10:37,  2.15s/it]train/val metrics at epoch 5 | loss : 1.05/1.12 | micro_F1 : 0.32/0.32:   1%|▏         | 4/300 [00:10<10:37,  2.15s/it]train/val metrics at epoch 5 | loss : 1.05/1.12 | micro_F1 : 0.32/0.32:   2%|▏         | 5/300 [00:11<10:34,  2.15s/it]train/val metrics at epoch 6 | loss : 1.03/1.11 | micro_F1 : 0.33/0.36:   2%|▏         | 5/300 [00:12<10:34,  2.15s/it]train/val metrics at epoch 6 | loss : 1.03/1.11 | micro_F1 : 0.33/0.36:   2%|▏         | 6/300 [00:13<10:21,  2.11s/it]train/val metrics at epoch 7 | loss : 1.01/1.08 | micro_F1 : 0.35/0.31:   2%|▏         | 6/300 [00:15<10:21,  2.11s/it]train/val metrics at epoch 7 | loss : 1.01/1.08 | micro_F1 : 0.35/0.31:   2%|▏         | 7/300 [00:15<10:28,  2.14s/it]train/val metrics at epoch 8 | loss : 0.99/1.09 | micro_F1 : 0.36/0.38:   2%|▏         | 7/300 [00:17<10:28,  2.14s/it]train/val metrics at epoch 8 | loss : 0.99/1.09 | micro_F1 : 0.36/0.38:   3%|▎         | 8/300 [00:17<10:22,  2.13s/it]train/val metrics at epoch 9 | loss : 0.97/1.08 | micro_F1 : 0.36/0.34:   3%|▎         | 8/300 [00:19<10:22,  2.13s/it]train/val metrics at epoch 9 | loss : 0.97/1.08 | micro_F1 : 0.36/0.34:   3%|▎         | 9/300 [00:19<10:11,  2.10s/it]train/val metrics at epoch 10 | loss : 0.95/1.08 | micro_F1 : 0.38/0.29:   3%|▎         | 9/300 [00:21<10:11,  2.10s/it]train/val metrics at epoch 10 | loss : 0.95/1.08 | micro_F1 : 0.38/0.29:   3%|▎         | 10/300 [00:21<10:29,  2.17s/it]train/val metrics at epoch 11 | loss : 0.94/1.08 | micro_F1 : 0.37/0.37:   3%|▎         | 10/300 [00:23<10:29,  2.17s/it]train/val metrics at epoch 11 | loss : 0.94/1.08 | micro_F1 : 0.37/0.37:   4%|▎         | 11/300 [00:23<10:24,  2.16s/it]train/val metrics at epoch 12 | loss : 0.92/1.09 | micro_F1 : 0.39/0.39:   4%|▎         | 11/300 [00:25<10:24,  2.16s/it]train/val metrics at epoch 12 | loss : 0.92/1.09 | micro_F1 : 0.39/0.39:   4%|▍         | 12/300 [00:26<10:15,  2.14s/it]train/val metrics at epoch 13 | loss : 0.92/1.06 | micro_F1 : 0.39/0.36:   4%|▍         | 12/300 [00:27<10:15,  2.14s/it]train/val metrics at epoch 13 | loss : 0.92/1.06 | micro_F1 : 0.39/0.36:   4%|▍         | 13/300 [00:28<10:04,  2.10s/it]train/val metrics at epoch 14 | loss : 0.91/1.06 | micro_F1 : 0.39/0.36:   4%|▍         | 13/300 [00:29<10:04,  2.10s/it]train/val metrics at epoch 14 | loss : 0.91/1.06 | micro_F1 : 0.39/0.36:   5%|▍         | 14/300 [00:30<09:59,  2.10s/it]train/val metrics at epoch 15 | loss : 0.90/1.07 | micro_F1 : 0.39/0.36:   5%|▍         | 14/300 [00:31<09:59,  2.10s/it]train/val metrics at epoch 15 | loss : 0.90/1.07 | micro_F1 : 0.39/0.36:   5%|▌         | 15/300 [00:32<09:54,  2.09s/it]train/val metrics at epoch 16 | loss : 0.90/1.07 | micro_F1 : 0.40/0.33:   5%|▌         | 15/300 [00:34<09:54,  2.09s/it]train/val metrics at epoch 16 | loss : 0.90/1.07 | micro_F1 : 0.40/0.33:   5%|▌         | 16/300 [00:34<09:46,  2.06s/it]train/val metrics at epoch 17 | loss : 0.89/1.10 | micro_F1 : 0.40/0.39:   5%|▌         | 16/300 [00:36<09:46,  2.06s/it]train/val metrics at epoch 17 | loss : 0.89/1.10 | micro_F1 : 0.40/0.39:   6%|▌         | 17/300 [00:36<09:44,  2.06s/it]train/val metrics at epoch 18 | loss : 0.88/1.05 | micro_F1 : 0.40/0.37:   6%|▌         | 17/300 [00:38<09:44,  2.06s/it]train/val metrics at epoch 18 | loss : 0.88/1.05 | micro_F1 : 0.40/0.37:   6%|▌         | 18/300 [00:38<09:50,  2.09s/it]train/val metrics at epoch 19 | loss : 0.88/1.06 | micro_F1 : 0.40/0.35:   6%|▌         | 18/300 [00:40<09:50,  2.09s/it]train/val metrics at epoch 19 | loss : 0.88/1.06 | micro_F1 : 0.40/0.35:   6%|▋         | 19/300 [00:40<09:46,  2.09s/it]train/val metrics at epoch 20 | loss : 0.87/1.06 | micro_F1 : 0.41/0.36:   6%|▋         | 19/300 [00:42<09:46,  2.09s/it]train/val metrics at epoch 20 | loss : 0.87/1.06 | micro_F1 : 0.41/0.36:   7%|▋         | 20/300 [00:42<09:40,  2.07s/it]train/val metrics at epoch 21 | loss : 0.87/1.07 | micro_F1 : 0.40/0.36:   7%|▋         | 20/300 [00:44<09:40,  2.07s/it]train/val metrics at epoch 21 | loss : 0.87/1.07 | micro_F1 : 0.40/0.36:   7%|▋         | 21/300 [00:44<09:37,  2.07s/it]train/val metrics at epoch 22 | loss : 0.87/1.06 | micro_F1 : 0.41/0.37:   7%|▋         | 21/300 [00:46<09:37,  2.07s/it]train/val metrics at epoch 22 | loss : 0.87/1.06 | micro_F1 : 0.41/0.37:   7%|▋         | 22/300 [00:46<09:35,  2.07s/it]train/val metrics at epoch 23 | loss : 0.86/1.07 | micro_F1 : 0.41/0.37:   7%|▋         | 22/300 [00:48<09:35,  2.07s/it]train/val metrics at epoch 23 | loss : 0.86/1.07 | micro_F1 : 0.41/0.37:   8%|▊         | 23/300 [00:48<09:36,  2.08s/it]train/val metrics at epoch 24 | loss : 0.86/1.07 | micro_F1 : 0.41/0.37:   8%|▊         | 23/300 [00:50<09:36,  2.08s/it]train/val metrics at epoch 24 | loss : 0.86/1.07 | micro_F1 : 0.41/0.37:   8%|▊         | 24/300 [00:50<09:35,  2.08s/it]train/val metrics at epoch 25 | loss : 0.86/1.07 | micro_F1 : 0.41/0.37:   8%|▊         | 24/300 [00:52<09:35,  2.08s/it]train/val metrics at epoch 25 | loss : 0.86/1.07 | micro_F1 : 0.41/0.37:   8%|▊         | 25/300 [00:52<09:35,  2.09s/it]train/val metrics at epoch 26 | loss : 0.86/1.06 | micro_F1 : 0.41/0.37:   8%|▊         | 25/300 [00:54<09:35,  2.09s/it]train/val metrics at epoch 26 | loss : 0.86/1.06 | micro_F1 : 0.41/0.37:   9%|▊         | 26/300 [00:54<09:27,  2.07s/it]train/val metrics at epoch 27 | loss : 0.86/1.08 | micro_F1 : 0.41/0.36:   9%|▊         | 26/300 [00:56<09:27,  2.07s/it]train/val metrics at epoch 27 | loss : 0.86/1.08 | micro_F1 : 0.41/0.36:   9%|▉         | 27/300 [00:57<09:26,  2.07s/it]train/val metrics at epoch 28 | loss : 0.86/1.05 | micro_F1 : 0.41/0.37:   9%|▉         | 27/300 [00:58<09:26,  2.07s/it]train/val metrics at epoch 28 | loss : 0.86/1.05 | micro_F1 : 0.41/0.37:   9%|▉         | 27/300 [00:59<10:04,  2.21s/it]
+wandb: Waiting for W&B process to finish... (success).
+wandb: 
+wandb: Run history:
+wandb:          epoch ▁
+wandb:  learning rate ▁
+wandb:           time ▁
+wandb:     train loss ▁
+wandb: train macro F1 ▁
+wandb: train micro F1 ▁
+wandb:       val loss ▁
+wandb:   val macro F1 ▁
+wandb:   val micro F1 ▁
+wandb: 
+wandb: Run summary:
+wandb:          epoch 28
+wandb:  learning rate 0.0
+wandb:           time 61.18927
+wandb:     train loss 0.85861
+wandb: train macro F1 0.34072
+wandb: train micro F1 0.41219
+wandb:       val loss 1.05465
+wandb:   val macro F1 0.27845
+wandb:   val micro F1 0.36536
+wandb: 
+wandb: 🚀 View run solar-yogurt-252 at: https://wandb.ai/msc-nicola/train_all_MLC/runs/tv132r27
+wandb: Synced 5 W&B file(s), 1 media file(s), 1 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230627_033448-tv132r27/logs
+wandb: Currently logged in as: tha-santacruz (msc-nicola). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.4
+wandb: Run data is saved locally in /home/santacro/masters_thesis/all_runs/wandb/run-20230627_033612-f1hbvrzh
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run neat-fire-255
+wandb: ⭐️ View project at https://wandb.ai/msc-nicola/test_all_MLC
+wandb: 🚀 View run at https://wandb.ai/msc-nicola/test_all_MLC/runs/f1hbvrzh
+Running job on GPU : Tesla V100-PCIE-32GB
+Namespace(BATCH_SIZE=128, CHECKPOINTS_PATH='/scratch/izar/santacro/checkpoints/', DATASET_PATH='/scratch/izar/santacro/final_data/', DEVICE='cuda:0', EMBEDDING='longformer', EPOCH_NUM=300, FRACTION=50, HIDDEN_SIZE=8192, JOB_ID=249, LEARNING_RATE=1e-05, LEVEL='L1', LOAD_CHECKPOINT='yes', MERGE_METHOD='fusion', MIN_LEARNING_RATE=1e-06, NUM_WORKERS=8, RANDOM_STATE=5, RUN_MODE='test', SAVE_CHECKPOINTS='yes', SPLITTING='progressive', TARGET_BASE='set', WANDB_ENTITY='msc-nicola', WANDB_LOGS='yes', WANDB_PROJECT='all_MLC')
+Number of train samples : 9802
+Number of val samples : 1089
+Number of test samples : 5400
+Loaded model state dict from file /scratch/izar/santacro/checkpoints//5_longformer_embedding_L1_level_fusion_merging_progressive_50%_8192.pth
+wandb: Waiting for W&B process to finish... (success).
+wandb: - 0.129 MB of 0.188 MB uploaded (0.000 MB deduped)wandb: \ 0.188 MB of 0.188 MB uploaded (0.000 MB deduped)wandb: | 0.193 MB of 0.193 MB uploaded (0.000 MB deduped)wandb: 
+wandb: Run history:
+wandb:     test loss ▁
+wandb: test macro F1 ▁
+wandb:  test macro H ▁
+wandb: test micro F1 ▁
+wandb: 
+wandb: Run summary:
+wandb:     test loss 1.07504
+wandb: test macro F1 0.29949
+wandb:  test macro H 2.33148
+wandb: test micro F1 0.37506
+wandb: 
+wandb: 🚀 View run neat-fire-255 at: https://wandb.ai/msc-nicola/test_all_MLC/runs/f1hbvrzh
+wandb: Synced 4 W&B file(s), 10 media file(s), 1 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230627_033612-f1hbvrzh/logs

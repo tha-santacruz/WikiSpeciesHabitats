@@ -1,0 +1,5 @@
+module purge
+module load gcc python
+virtualenv --system-site-packages -p python3 eceo
+source eceo/bin/activate
+pip install smart_open gensim tqdm nltk pickle5
