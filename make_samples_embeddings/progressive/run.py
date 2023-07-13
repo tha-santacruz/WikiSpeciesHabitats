@@ -47,8 +47,7 @@ class SplitProcessor():
         self.device = "cuda:0"
         ## Models
         self.dv_tokenizer = tokenize
-        #'/scratch/izar/santacro/models/doc2vec_light.pickle'
-        with open('/scratch/izar/santacro/models/doc2vec_light.pickle', 'rb') as handle:
+        with open('./../models/doc2vec_light.pickle', 'rb') as handle:
             self.dv_model = pickle.load(handle)
         self.lf_tokenizer = LongformerTokenizerFast.from_pretrained("allenai/longformer-base-4096")
         self.lf_model = LongformerModel.from_pretrained("allenai/longformer-base-4096").to(device=self.device)
@@ -159,23 +158,22 @@ class SplitProcessor():
     def get_all_embeddings(self):
         ## agnostic ones
         #self.split_data = self.split_data[:100]
-        #print("Getting text agnostic embeddings")
-        #self.split_data["agnostic_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_agnostic_inputs(x,len(self.species_keys)))
+        print("Getting text agnostic embeddings")
+        self.split_data["agnostic_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_agnostic_inputs(x,len(self.species_keys)))
         print("Getting doc2vec joined embeddings")
         self.split_data["doc2vec_joined_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_joined_inputs(x,"doc2vec","max",True,768))
-        #print("Getting longformer joined embeddings")
-        #self.split_data["longformer_joined_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_joined_inputs(x,"longformer","max",False,768))
-        #self.split_data["longformer_joined_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_joined_inputs(x,"longformer","sum", True,768))
-        #print("Getting doc2vec selected embeddings")
-        #self.split_data["doc2vec_selected_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_selected_doc2vec_inputs(x))
-        #print("Getting longformer selected embeddings")
-        #self.split_data["longformer_selected_embedding"] = self.get_selected_longformer_inputs(self.split_data["species_key"])
+        print("Getting longformer joined embeddings")
+        self.split_data["longformer_joined_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_joined_inputs(x,"longformer","max",False,768))
+        self.split_data["longformer_joined_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_joined_inputs(x,"longformer","sum", True,768))
+        print("Getting doc2vec selected embeddings")
+        self.split_data["doc2vec_selected_embedding"] = self.split_data["species_key"].apply(lambda x : self.get_selected_doc2vec_inputs(x))
+        print("Getting longformer selected embeddings")
+        self.split_data["longformer_selected_embedding"] = self.get_selected_longformer_inputs(self.split_data["species_key"])
         self.split_data.to_json(self.file_name, orient="records")
         print("Saved file, congrats")
 
 if __name__ == "__main__":
-    #"/scratch/izar/santacro/final_data/"
-    root = "/scratch/izar/santacro/final_data/"
+    root = "./../final_data/"
     cfg = parse_args()
     sp = SplitProcessor()
     sp.load_file(path=root, random_state = cfg.RANDOM_STATE, level=cfg.LEVEL, fraction=cfg.FRACTION, split=cfg.SPLIT)

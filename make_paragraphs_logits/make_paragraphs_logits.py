@@ -59,15 +59,15 @@ class ParagraphsRetriever():
         return paragraphs, name, content
 
 if __name__ == "__main__":
-    root = "/scratch/izar/santacro/final_data/species/"
+    root = "./../final_data/species/"
     tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
     preprocessing = lambda x : tokenizer(x, return_tensors="pt", padding="max_length", truncation=True, max_length=512)
     model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english").to(device="cuda:0")
-    model.load_state_dict(torch.load("/scratch/izar/santacro/models/bestmodel_distilbert.pth"))
+    model.load_state_dict(torch.load("./../models/bestmodel_distilbert.pth"))
     model.eval()
     pr = ParagraphsRetriever(root=root)
 
-    species_path = "/scratch/izar/santacro/final_data/species/"
+    species_path = "./../final_data/species/"
     species_list = os.listdir(species_path)
     """used_species = pd.read_json("/scratch/izar/santacro/final_data/1_L2_species_keys.json", orient="records")["species_key"].tolist()
     used_species = [str(spe)+".json" for spe in used_species]"""

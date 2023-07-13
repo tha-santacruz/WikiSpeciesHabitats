@@ -39,13 +39,9 @@ class WikiTextCleaner():
         return text
 
 if __name__ == "__main__":
-    root = "/scratch/izar/santacro/final_data/species/"
-    with open('/scratch/izar/santacro/models/doc2vec_light.pickle', 'rb') as handle:
+    root = "./../final_data/species/"
+    with open('./../models/doc2vec_light.pickle', 'rb') as handle:
         doc2vec = pickle.load(handle)
-    """doc2vec = Doc2Vec.load('/data/nicola/WSH/models/doc2vec_dbow.model')
-    temp = doc2vec.dv.vector_size
-    doc2vec.dv = None
-    doc2vec.dv = KeyedVectors(vector_size=temp)"""
     model = lambda x : doc2vec.infer_vector(tokenize(x))
     cleaner = WikiTextCleaner(remove_stopwords=False)
     for file in tqdm(os.listdir(root)):
