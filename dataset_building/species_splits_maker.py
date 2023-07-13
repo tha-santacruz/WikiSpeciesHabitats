@@ -50,8 +50,8 @@ class SpeciesSplitsMaker():
 
 
 if __name__ == "__main__":
-    inp_tar = pd.read_json("/data/nicola/WSH/final_data/1_L1_all_data.json", orient="records")
-    spe_key = pd.read_json("/data/nicola/WSH/final_data/1_L1_species_keys.json", orient="records")
+    inp_tar = pd.read_json("./../final_data/1_L1_all_data.json", orient="records")
+    spe_key = pd.read_json("./../final_data/1_L1_species_keys.json", orient="records")
 
     spm = SpeciesSplitsMaker(inputs_targets=inp_tar, species_keys=spe_key)
     ds = spm.process()

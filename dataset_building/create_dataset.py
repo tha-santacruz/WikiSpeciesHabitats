@@ -24,10 +24,10 @@ class Step1():
     def __init__(self):
         print("Step 1 : Habitat maps processing")
         ## Paths
-        raw_data_path = "./raw_data/"
-        processed_data_path = "./processed_data/"
+        raw_data_path = "./../raw_data/"
+        processed_data_path = "./../processed_data/"
         ## Area of interest
-        study_area = gpd.read_file("./raw_data/study_area/study_area.shp")
+        study_area = gpd.read_file("./../raw_data/study_area/study_area.shp")
         ## Habitat maps processing
         hmp = HabitatMapsProcessor(study_area=study_area, cantons_list=["VS","VD"], raw_data_path=raw_data_path)
         habitats_map, habitats_data = hmp.process_cantons()
@@ -46,11 +46,11 @@ class Step2():
     def __init__(self):
         print("Step 2 : Species records processing")
         ## Paths
-        raw_data_path = "./raw_data/"
-        processed_data_path = "./processed_data/"
-        final_data_path = "./final_data/"
+        raw_data_path = "./../raw_data/"
+        processed_data_path = "./../processed_data/"
+        final_data_path = "./../final_data/"
         ## Area of interest
-        study_area = gpd.read_file("./raw_data/study_area/study_area.shp")
+        study_area = gpd.read_file("./../raw_data/study_area/study_area.shp")
         ## Species records processing
         srp = SpeciesRecordsProcessor(study_area=study_area, raw_data_path=raw_data_path, final_data_path=final_data_path)
         species_records = srp.process_records()
@@ -71,9 +71,9 @@ class Step3():
     def __init__(self):
         print("Step 3 : Intersecting species and records")
         ## Paths
-        processed_data_path = "./processed_data/"
+        processed_data_path = "./../processed_data/"
         ## Study Area
-        study_area = gpd.read_file("./raw_data/study_area/study_area.shp")
+        study_area = gpd.read_file("./../raw_data/study_area/study_area.shp")
         ## Species-habitats merger
         shm = SpeciesHabitatMerger(study_area=study_area, processed_data_path=processed_data_path)
         ## Intersect data by chunks (to alleviate memory)
@@ -104,8 +104,8 @@ class Step4():
         print("Step 4 : Making split files")
         self.random_state = random_state
         ## Paths
-        processed_data_path = "./processed_data/"
-        final_data_path = "./final_data/"
+        processed_data_path = "./../processed_data/"
+        final_data_path = "./../final_data/"
         for level in "class", "group":
             if level == "class":
                 lname = "L1"
@@ -129,7 +129,7 @@ class Step5():
         print("Step 5 : Removing duplicates")
         self.random_state = random_state
         ## Paths
-        final_data_path = "./final_data/"
+        final_data_path = "./../final_data/"
         for level in ["L1", "L2"]:
             for base in ["species", "spatial"]:
                 for split in ["train", "test", "val"]:

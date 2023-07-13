@@ -6,7 +6,7 @@ if __name__ == "__main__":
     num_steps = 10
     for random_state in [1,2,3,4,5]:
         ## Read half2 data
-        half_2_data = pd.read_json(f"./final_data/{random_state}_L1_species_based_test_data.json", orient="records")[["set_based_class","species_based_class","species_key"]]
+        half_2_data = pd.read_json(f"./../final_data/{random_state}_L1_species_based_test_data.json", orient="records")[["set_based_class","species_based_class","species_key"]]
         ## Find a splitting that ensures a high overlapping of species between both equally long splits
         max_overlap = 0
         best_rs = 0
@@ -35,9 +35,9 @@ if __name__ == "__main__":
         t2_spe = [item for sublist in t2_spe for item in sublist]
         t2_spe = list(set(t2_spe))
         ## This one is gonna be used as a pool for train examples
-        t3 = pd.concat([pd.read_json(f"./final_data/{random_state}_L1_species_based_train_data.json", orient="records"),pd.read_json(f"./final_data/{random_state}_L1_species_based_val_data.json", orient="records")])
+        t3 = pd.concat([pd.read_json(f"./../final_data/{random_state}_L1_species_based_train_data.json", orient="records"),pd.read_json(f"./../final_data/{random_state}_L1_species_based_val_data.json", orient="records")])
         t3 = t3[["set_based_class","species_based_class","species_key"]].reset_index(drop=True)
-        #t3 = pd.read_json(f"./final_data/{random_state}_L1_species_based_train_data.json", orient="records").sample(len(t1), random_state=42) ## old method
+        #t3 = pd.read_json(f"./../final_data/{random_state}_L1_species_based_train_data.json", orient="records").sample(len(t1), random_state=42) ## old method
         ## To store chosen examples from t3
         t3_subset = t3
         ## To store unused examples from t2
@@ -74,12 +74,12 @@ if __name__ == "__main__":
             t5 = t4.sample(frac=0.1, random_state=random_state)
             t4 = t4.drop(t5.index)
             ## Save train and val
-            t4.reset_index(drop=True).to_json(f"./final_data/{random_state}_L1_progressive_{int(frac*100)}%_train_data.json", orient="records")
+            t4.reset_index(drop=True).to_json(f"./../final_data/{random_state}_L1_progressive_{int(frac*100)}%_train_data.json", orient="records")
             #print(len(t4))
-            t5.reset_index(drop=True).to_json(f"./final_data/{random_state}_L1_progressive_{int(frac*100)}%_val_data.json", orient="records")
+            t5.reset_index(drop=True).to_json(f"./../final_data/{random_state}_L1_progressive_{int(frac*100)}%_val_data.json", orient="records")
         #break
         ## Save test
-        t1.reset_index(drop=True).to_json(f"./final_data/{random_state}_L1_progressive_test_data.json", orient="records")
+        t1.reset_index(drop=True).to_json(f"./../final_data/{random_state}_L1_progressive_test_data.json", orient="records")
     ## Save metrics
     splits_stats.columns=["random_state","frac","species_inter","species_union","train_species","test_species"]
     splits_stats.to_json("progressive_splits_stats.json", orient="records")

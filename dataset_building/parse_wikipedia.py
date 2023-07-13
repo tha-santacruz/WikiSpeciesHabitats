@@ -16,7 +16,7 @@ import pandas as pd
 from tqdm import tqdm
 
 ## Loading data
-species_records = pd.read_csv("./raw_data/gbif_raw.csv", sep="\t")
+species_records = pd.read_csv("./../raw_data/gbif_raw.csv", sep="\t")
 
 ## Simplifying columns
 species_records = species_records.rename(columns={"speciesKey":"species_key"})
@@ -24,7 +24,7 @@ species_records = species_records[species_records["species_key"].notna()]
 species_records = species_records[["species", "species_key"]].drop_duplicates().reset_index().drop(["index"], axis=1)
 species_records["species_key"] = species_records["species_key"].apply(lambda x : int(x))
 
-def match_species(species, df=species_records, data_path="./final_data/species/"):
+def match_species(species, df=species_records, data_path="./../final_data/species/"):
     """Match parsed species article to a GBIF species instance and save information in a json file"""
     title, properties, texts, text_length = species
     binomial_name = None
@@ -166,7 +166,7 @@ def find_species(data_path, limit = None):
             break
             
         # Optional limit
-        if limit is not None and len(os.listdir("./final_data/species/")) >= limit:
+        if limit is not None and len(os.listdir("./../final_data/species/")) >= limit:
             return None
 
     # Memory management
@@ -179,7 +179,7 @@ def find_species(data_path, limit = None):
 if __name__=="__main__":
     print(f"loaded data lenght : {len(species_records)}")
     # Making partitions for the multiprocessing
-    root = "./wikipedia_dump/"
+    root = "./../wikipedia_dump/"
     partitions = [root + file for file in os.listdir(root) if 'xml-p' in file]
 
     ## Multiprocessing

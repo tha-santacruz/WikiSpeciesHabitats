@@ -99,7 +99,7 @@ class GridBuilder():
         return grid
     
 if __name__ == "__main__":
-    shape = gpd.read_file("raw_data/studyArea/studyArea.shp")
+    shape = gpd.read_file("./../raw_data/studyArea/studyArea.shp")
     bg = GridBuilder()
     grid = bg.grid_from_shape(shape=shape)
     grid.to_file("grid.shp")
