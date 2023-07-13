@@ -16,7 +16,7 @@ import pandas as pd
 from tqdm import tqdm
 
 ## Loading data
-species_records = pd.read_csv("raw_data/gbif_raw.csv", sep="\t")
+species_records = pd.read_csv("./raw_data/gbif_raw.csv", sep="\t")
 
 ## Simplifying columns
 species_records = species_records.rename(columns={"speciesKey":"species_key"})
