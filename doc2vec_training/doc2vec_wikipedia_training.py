@@ -34,27 +34,27 @@ if __name__ == "__main__":
                 logging.info("processing article #%i: %r (%i tokens)", article_no, title, len(content))
             fout.write(f"{title}\t{' '.join(content)}\n")  # title_of_article [TAB] words of the article"""
 
-    documents = TaggedWikiCorpus('/scratch/santacro/wiki.txt.gz')  # A streamed iterable; nothing in RAM yet.
+    documents = TaggedWikiCorpus('./../wikipedia_dump/wiki.txt.gz')  # A streamed iterable; nothing in RAM yet.
 
     workers = 17  # multiprocessing.cpu_count() - 1  # leave one core for the OS & other stuff
     vector_size = 768
     epochs = 10
 
     ## PV-DBOW: paragraph vector in distributed bag of words mode
-    """
+    
     model = Doc2Vec(
         dm=0, dbow_words=1,  # dbow_words=1 to train word vectors at the same time too, not only DBOW
         vector_size=vector_size, window=8, epochs=epochs, workers=workers, max_final_vocab=1000000,
     )
     model.build_vocab(documents, progress_per=500000)
     model.train(documents, total_examples=model.corpus_count, epochs=model.epochs, report_delay=30*60)
-    model.save(f'/scratch/santacro/doc2vec_dbow_{vector_size}.model')
-    """
+    model.save(f'./../models/doc2vec_dbow_{vector_size}.model')
+    
     ## PV-DM: paragraph vector in distributed memory mode
-    model = Doc2Vec(
+    """model = Doc2Vec(
         dm=1, dm_mean=1,  # use average of context word vectors to train DM
         vector_size=vector_size, window=8, epochs=epochs, workers=workers, max_final_vocab=1000000,
     )
     model.build_vocab(documents, progress_per=500000)
     model.train(documents, total_examples=model.corpus_count, epochs=model.epochs, report_delay=30*60)
-    model.save(f'/scratch/santacro/doc2vec_dm_{vector_size}.model')
+    model.save(f'./../models/doc2vec_dm_{vector_size}.model')"""
