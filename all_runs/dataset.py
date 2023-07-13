@@ -70,7 +70,7 @@ class WikiSpeciesHabitats():
 if __name__ == "__main__":
     """Testing of the dataset class, for debugging"""
 
-    root = "/data/nicola/WSH/final_data/"
+    root = "./../final_data/"
 
     ds = WikiSpeciesHabitats(path=root, split="train", merge_method = "fusion", random_state = 5, target_base = "set", splitting="progressive", fraction = 40, embedding="doc2vec", level="L1")
     print(len(ds))
