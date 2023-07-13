@@ -58,10 +58,10 @@ class ParagraphsRetriever():
 if __name__ == "__main__":
     #df = pd.DataFrame(columns=["species_file","binomial_name","paragraph_index","paragraph_class","paragraph_file"])
     #df.to_json("annotated_data.json", orient="records")
-    species_path = "/data/nicola/WSH/final_data/species/"
+    species_path = "./final_data/species/"
     species_list = os.listdir(species_path)
     ## Species used in train, test and/or val sets
-    used_species = pd.read_json("/data/nicola/WSH/final_data/L2_species_keys.json", orient="records")["species_key"].tolist()
+    used_species = pd.read_json("./final_data/L2_species_keys.json", orient="records")["species_key"].tolist()
     used_species = [str(spe)+".json" for spe in used_species]
     ## Species to be used for annotation
     unused_species = [spe for spe in species_list if spe not in used_species]

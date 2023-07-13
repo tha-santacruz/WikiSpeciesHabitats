@@ -21,12 +21,12 @@ def parse_args():
     
     parser.add_argument("--CHECKPOINTS_PATH", dest="CHECKPOINTS_PATH",
                       help="{Path to the checkpoints folder}",
-                      default = "/data/nicola/WSH/checkpoints/",
+                      default = "./../checkpoints/",
                       type=str)
 
     parser.add_argument("--DATASET_PATH", dest="DATASET_PATH",
                       help="{Path to the dataset}",
-                      default = "/data/nicola/WSH/bert_finetuning/",
+                      default = "./",
                       type=str)
 
     parser.add_argument("--DEVICE", dest="DEVICE",
@@ -73,7 +73,7 @@ def parse_args():
     
     parser.add_argument("--WANDB_ENTITY", dest="WANDB_ENTITY",
                       help="{wandb entity to save logs}",
-                      default = "msc-nicola",
+                      default = "group_name",
                       type=str)
     
     parser.add_argument("--WANDB_LOGS", dest="WANDB_LOGS",

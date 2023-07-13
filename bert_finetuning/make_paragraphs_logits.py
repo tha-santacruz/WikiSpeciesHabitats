@@ -8,17 +8,17 @@ import os
 CUDA_LAUNCH_BLOCKING=1
 
 if __name__ == "__main__":
-    root = "/data/nicola/WSH/final_data/species/"
+    root = "./../final_data/species/"
     tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
     preprocessing = lambda x : tokenizer(x, return_tensors="pt", padding="max_length", truncation=True, max_length=512)
     model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english").to(device="cuda:0")
-    model.load_state_dict(torch.load("/data/nicola/WSH/checkpoints/bestmodel_distilbert.pth"))
+    model.load_state_dict(torch.load("./../checkpoints/bestmodel_distilbert.pth"))
     model.eval()
     pr = ParagraphsRetriever(root=root)
 
-    species_path = "/data/nicola/WSH/final_data/species/"
+    species_path = "./../final_data/species/"
     species_list = os.listdir(species_path)
-    used_species = pd.read_json("/data/nicola/WSH/final_data/L2_species_keys.json", orient="records")["species_key"].tolist()
+    used_species = pd.read_json("./../final_data/L2_species_keys.json", orient="records")["species_key"].tolist()
     used_species = [str(spe)+".json" for spe in used_species]
 
     for file in tqdm(used_species):

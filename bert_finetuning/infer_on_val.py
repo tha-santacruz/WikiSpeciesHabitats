@@ -7,12 +7,12 @@ import torch
 ## Dataset
 tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
 preprocessing = lambda x : tokenizer(x, return_tensors="pt", padding="max_length", truncation=True, max_length=512)
-val_set = BertTuningDataset(path="/data/nicola/WSH/bert_finetuning/", split="val", preprocessing=preprocessing)
+val_set = BertTuningDataset(path="./", split="val", preprocessing=preprocessing)
 dataloader = DataLoader(val_set, batch_size=1, shuffle=False)
 
 ## Model
 model = DistilBertForSequenceClassification.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english").to(device="cuda:0")
-model.load_state_dict(torch.load("/data/nicola/WSH/checkpoints/bestmodel_distilbert.pth"))
+model.load_state_dict(torch.load("./bestmodel_distilbert.pth"))
 model.eval()
 
 categories = ["Negative","Positive"]

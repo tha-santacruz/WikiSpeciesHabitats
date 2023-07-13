@@ -74,7 +74,7 @@ class BertTuningDataset():
 if __name__ == "__main__":
     """Testing of the dataset class, for debugging"""
 
-    root = "/data/nicola/WSH/bert_finetuning/"
+    root = "./"
     tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english")
     prepr= lambda x : tokenizer(x, return_tensors="pt", padding="max_length", truncation=True, max_length=512)
     with tempfile.TemporaryDirectory() as temp_dir_path:
